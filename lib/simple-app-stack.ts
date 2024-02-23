@@ -15,6 +15,18 @@ export class SimpleAppStack extends cdk.Stack {
       timeout: cdk.Duration.seconds(10),
       memorySize: 128,
     });
-
+    // const simpleFnURL = simpleFn.addFunctionUrl({
+    //   authType: lambda.FunctionUrlAuthType.NONE,
+    //   cors: {
+    //     allowedOrigins: ["*"],
+    //   },
+    // });
+    const simpleFnURL = simpleFn.addFunctionUrl({
+      authType: lambda.FunctionUrlAuthType.AWS_IAM,   // CHANGE
+      cors: {
+        allowedOrigins: ["*"],
+      },
+    });
+    new cdk.CfnOutput(this, "Simple Function Url", { value: simpleFnURL.url });
   }
 }
