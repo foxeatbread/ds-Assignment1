@@ -128,6 +128,59 @@
               "version": "2.88.0"
             }
           },
+          "MovieReviewTable": {
+            "id": "MovieReviewTable",
+            "path": "RestAPIStack/MovieReviewTable",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "RestAPIStack/MovieReviewTable/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::DynamoDB::Table",
+                  "aws:cdk:cloudformation:props": {
+                    "attributeDefinitions": [
+                      {
+                        "attributeName": "movieId",
+                        "attributeType": "N"
+                      },
+                      {
+                        "attributeName": "reviewDate",
+                        "attributeType": "S"
+                      }
+                    ],
+                    "billingMode": "PAY_PER_REQUEST",
+                    "keySchema": [
+                      {
+                        "attributeName": "movieId",
+                        "keyType": "HASH"
+                      },
+                      {
+                        "attributeName": "reviewDate",
+                        "keyType": "RANGE"
+                      }
+                    ],
+                    "tableName": "MovieReview"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_dynamodb.CfnTable",
+                  "version": "2.88.0"
+                }
+              },
+              "ScalingRole": {
+                "id": "ScalingRole",
+                "path": "RestAPIStack/MovieReviewTable/ScalingRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.88.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_dynamodb.Table",
+              "version": "2.88.0"
+            }
+          },
           "GetMovieByIdFn": {
             "id": "GetMovieByIdFn",
             "path": "RestAPIStack/GetMovieByIdFn",
@@ -306,7 +359,7 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
                       },
-                      "s3Key": "beb6f2db1b1fd8ddfbbf43e622df5945dd13d169146ccf67f027d88a6e9ef151.zip"
+                      "s3Key": "d130a3875c6c9592f382f73165d079594d31f6f8288dfb46273ee9fd4e3a3973.zip"
                     },
                     "environment": {
                       "variables": {
@@ -501,7 +554,7 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
                       },
-                      "s3Key": "e60384c73754874662aaf264d9eaaae4de1b8e04a4dac6d454fdf41608e8a6f3.zip"
+                      "s3Key": "96a1201b656d3c20fbb68a11822ce221d2130e474152512a3d5d8f21f9b187b0.zip"
                     },
                     "environment": {
                       "variables": {
@@ -697,7 +750,7 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
                       },
-                      "s3Key": "195afba3173861b781b2c3a5bd457ba23531060190b1a6f13ba0e9b4ff9d8df6.zip"
+                      "s3Key": "eec4cc6835682aa59640606cbbaf3f65bf24a5da236b81e7b1b5077589679e08.zip"
                     },
                     "environment": {
                       "variables": {
@@ -799,7 +852,20 @@
                             "policyDocument": {
                               "Statement": [
                                 {
-                                  "Action": "dynamodb:*",
+                                  "Action": [
+                                    "dynamodb:BatchGetItem",
+                                    "dynamodb:BatchWriteItem",
+                                    "dynamodb:ConditionCheckItem",
+                                    "dynamodb:DeleteItem",
+                                    "dynamodb:DescribeTable",
+                                    "dynamodb:GetItem",
+                                    "dynamodb:GetRecords",
+                                    "dynamodb:GetShardIterator",
+                                    "dynamodb:PutItem",
+                                    "dynamodb:Query",
+                                    "dynamodb:Scan",
+                                    "dynamodb:UpdateItem"
+                                  ],
                                   "Effect": "Allow",
                                   "Resource": [
                                     {
@@ -880,7 +946,7 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
                       },
-                      "s3Key": "e700c88ad5077fb9d895fec0d379897eba100187ac35902b5aebb86a7ece62ef.zip"
+                      "s3Key": "0fafd8b4f988a54d50bd624cea1dd7cb94f26953c736a7c09bc76c15318da46c.zip"
                     },
                     "environment": {
                       "variables": {
@@ -1083,7 +1149,7 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
                       },
-                      "s3Key": "c3a8641513631fb144a0fa4a7b27c2a1de405099c318fd0476c4c55129a81e10.zip"
+                      "s3Key": "dcb51343944bb824bfd33a4cc49237d42c0b0f9f1a56df5a408ca87793dab689.zip"
                     },
                     "environment": {
                       "variables": {
@@ -1117,17 +1183,17 @@
               "version": "2.88.0"
             }
           },
-          "GetMovieIncluedeCastFn": {
-            "id": "GetMovieIncluedeCastFn",
-            "path": "RestAPIStack/GetMovieIncluedeCastFn",
+          "AddReviewFn": {
+            "id": "AddReviewFn",
+            "path": "RestAPIStack/AddReviewFn",
             "children": {
               "ServiceRole": {
                 "id": "ServiceRole",
-                "path": "RestAPIStack/GetMovieIncluedeCastFn/ServiceRole",
+                "path": "RestAPIStack/AddReviewFn/ServiceRole",
                 "children": {
                   "ImportServiceRole": {
                     "id": "ImportServiceRole",
-                    "path": "RestAPIStack/GetMovieIncluedeCastFn/ServiceRole/ImportServiceRole",
+                    "path": "RestAPIStack/AddReviewFn/ServiceRole/ImportServiceRole",
                     "constructInfo": {
                       "fqn": "aws-cdk-lib.Resource",
                       "version": "2.88.0"
@@ -1135,7 +1201,7 @@
                   },
                   "Resource": {
                     "id": "Resource",
-                    "path": "RestAPIStack/GetMovieIncluedeCastFn/ServiceRole/Resource",
+                    "path": "RestAPIStack/AddReviewFn/ServiceRole/Resource",
                     "attributes": {
                       "aws:cdk:cloudformation:type": "AWS::IAM::Role",
                       "aws:cdk:cloudformation:props": {
@@ -1174,11 +1240,11 @@
                   },
                   "DefaultPolicy": {
                     "id": "DefaultPolicy",
-                    "path": "RestAPIStack/GetMovieIncluedeCastFn/ServiceRole/DefaultPolicy",
+                    "path": "RestAPIStack/AddReviewFn/ServiceRole/DefaultPolicy",
                     "children": {
                       "Resource": {
                         "id": "Resource",
-                        "path": "RestAPIStack/GetMovieIncluedeCastFn/ServiceRole/DefaultPolicy/Resource",
+                        "path": "RestAPIStack/AddReviewFn/ServiceRole/DefaultPolicy/Resource",
                         "attributes": {
                           "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
                           "aws:cdk:cloudformation:props": {
@@ -1187,45 +1253,44 @@
                                 {
                                   "Action": [
                                     "dynamodb:BatchGetItem",
+                                    "dynamodb:BatchWriteItem",
                                     "dynamodb:ConditionCheckItem",
+                                    "dynamodb:DeleteItem",
                                     "dynamodb:DescribeTable",
                                     "dynamodb:GetItem",
                                     "dynamodb:GetRecords",
                                     "dynamodb:GetShardIterator",
+                                    "dynamodb:PutItem",
                                     "dynamodb:Query",
-                                    "dynamodb:Scan"
+                                    "dynamodb:Scan",
+                                    "dynamodb:UpdateItem"
                                   ],
                                   "Effect": "Allow",
                                   "Resource": [
                                     {
                                       "Fn::GetAtt": [
-                                        "MovieCastTableE4F7E4C8",
+                                        "MovieReviewTable19486002",
                                         "Arn"
                                       ]
                                     },
                                     {
-                                      "Fn::Join": [
-                                        "",
-                                        [
-                                          {
-                                            "Fn::GetAtt": [
-                                              "MovieCastTableE4F7E4C8",
-                                              "Arn"
-                                            ]
-                                          },
-                                          "/index/*"
-                                        ]
+                                      "Fn::GetAtt": [
+                                        "MoviesTable0F76A3E4",
+                                        "Arn"
                                       ]
+                                    },
+                                    {
+                                      "Ref": "AWS::NoValue"
                                     }
                                   ]
                                 }
                               ],
                               "Version": "2012-10-17"
                             },
-                            "policyName": "GetMovieIncluedeCastFnServiceRoleDefaultPolicyB0A9F8ED",
+                            "policyName": "AddReviewFnServiceRoleDefaultPolicyC10A9151",
                             "roles": [
                               {
-                                "Ref": "GetMovieIncluedeCastFnServiceRoleC25B9FF4"
+                                "Ref": "AddReviewFnServiceRole87863C7A"
                               }
                             ]
                           }
@@ -1249,11 +1314,11 @@
               },
               "Code": {
                 "id": "Code",
-                "path": "RestAPIStack/GetMovieIncluedeCastFn/Code",
+                "path": "RestAPIStack/AddReviewFn/Code",
                 "children": {
                   "Stage": {
                     "id": "Stage",
-                    "path": "RestAPIStack/GetMovieIncluedeCastFn/Code/Stage",
+                    "path": "RestAPIStack/AddReviewFn/Code/Stage",
                     "constructInfo": {
                       "fqn": "aws-cdk-lib.AssetStaging",
                       "version": "2.88.0"
@@ -1261,7 +1326,7 @@
                   },
                   "AssetBucket": {
                     "id": "AssetBucket",
-                    "path": "RestAPIStack/GetMovieIncluedeCastFn/Code/AssetBucket",
+                    "path": "RestAPIStack/AddReviewFn/Code/AssetBucket",
                     "constructInfo": {
                       "fqn": "aws-cdk-lib.aws_s3.BucketBase",
                       "version": "2.88.0"
@@ -1275,7 +1340,7 @@
               },
               "Resource": {
                 "id": "Resource",
-                "path": "RestAPIStack/GetMovieIncluedeCastFn/Resource",
+                "path": "RestAPIStack/AddReviewFn/Resource",
                 "attributes": {
                   "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
                   "aws:cdk:cloudformation:props": {
@@ -1286,12 +1351,12 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
                       },
-                      "s3Key": "f1e3c10577a651e3138cefd9478c84eeb8dbac0fc6b8117a15b72d5a6e9ecc45.zip"
+                      "s3Key": "5c3b4e1a0677f011a5792d75d1599cd4030bb8db4758aa13cb59de3710f42886.zip"
                     },
                     "environment": {
                       "variables": {
                         "TABLE_NAME": {
-                          "Ref": "MovieCastTableE4F7E4C8"
+                          "Ref": "MovieReviewTable19486002"
                         },
                         "REGION": "eu-west-1",
                         "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
@@ -1301,11 +1366,11 @@
                     "memorySize": 128,
                     "role": {
                       "Fn::GetAtt": [
-                        "GetMovieIncluedeCastFnServiceRoleC25B9FF4",
+                        "AddReviewFnServiceRole87863C7A",
                         "Arn"
                       ]
                     },
-                    "runtime": "nodejs18.x",
+                    "runtime": "nodejs16.x",
                     "timeout": 10
                   }
                 },
@@ -1369,6 +1434,12 @@
                                 {
                                   "Fn::GetAtt": [
                                     "MovieCastTableE4F7E4C8",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::GetAtt": [
+                                    "MovieReviewTable19486002",
                                     "Arn"
                                   ]
                                 },
@@ -1586,7 +1657,7 @@
                       "aws:cdk:cloudformation:type": "AWS::ApiGateway::Stage",
                       "aws:cdk:cloudformation:props": {
                         "deploymentId": {
-                          "Ref": "RestAPIDeploymentD35A53800f0bca70e7eaa1768e22f23a8d2b338e"
+                          "Ref": "RestAPIDeploymentD35A538023756740725d09ef0027eaea2ad14e4d"
                         },
                         "restApiId": {
                           "Ref": "RestAPI1CC12F26"
@@ -1895,227 +1966,6 @@
                           "version": "2.88.0"
                         }
                       },
-                      "{movieId}": {
-                        "id": "{movieId}",
-                        "path": "RestAPIStack/RestAPI/Default/movies/{movieId}",
-                        "children": {
-                          "Resource": {
-                            "id": "Resource",
-                            "path": "RestAPIStack/RestAPI/Default/movies/{movieId}/Resource",
-                            "attributes": {
-                              "aws:cdk:cloudformation:type": "AWS::ApiGateway::Resource",
-                              "aws:cdk:cloudformation:props": {
-                                "parentId": {
-                                  "Ref": "RestAPImoviesA51CB040"
-                                },
-                                "pathPart": "{movieId}",
-                                "restApiId": {
-                                  "Ref": "RestAPI1CC12F26"
-                                }
-                              }
-                            },
-                            "constructInfo": {
-                              "fqn": "aws-cdk-lib.aws_apigateway.CfnResource",
-                              "version": "2.88.0"
-                            }
-                          },
-                          "OPTIONS": {
-                            "id": "OPTIONS",
-                            "path": "RestAPIStack/RestAPI/Default/movies/{movieId}/OPTIONS",
-                            "children": {
-                              "Resource": {
-                                "id": "Resource",
-                                "path": "RestAPIStack/RestAPI/Default/movies/{movieId}/OPTIONS/Resource",
-                                "attributes": {
-                                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
-                                  "aws:cdk:cloudformation:props": {
-                                    "apiKeyRequired": false,
-                                    "authorizationType": "NONE",
-                                    "httpMethod": "OPTIONS",
-                                    "integration": {
-                                      "type": "MOCK",
-                                      "requestTemplates": {
-                                        "application/json": "{ statusCode: 200 }"
-                                      },
-                                      "integrationResponses": [
-                                        {
-                                          "statusCode": "204",
-                                          "responseParameters": {
-                                            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date'",
-                                            "method.response.header.Access-Control-Allow-Origin": "'*'",
-                                            "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,POST,PUT,PATCH,DELETE'",
-                                            "method.response.header.Access-Control-Allow-Credentials": "'true'"
-                                          }
-                                        }
-                                      ]
-                                    },
-                                    "methodResponses": [
-                                      {
-                                        "statusCode": "204",
-                                        "responseParameters": {
-                                          "method.response.header.Access-Control-Allow-Headers": true,
-                                          "method.response.header.Access-Control-Allow-Origin": true,
-                                          "method.response.header.Access-Control-Allow-Methods": true,
-                                          "method.response.header.Access-Control-Allow-Credentials": true
-                                        }
-                                      }
-                                    ],
-                                    "resourceId": {
-                                      "Ref": "RestAPImoviesmovieId3DE0D522"
-                                    },
-                                    "restApiId": {
-                                      "Ref": "RestAPI1CC12F26"
-                                    }
-                                  }
-                                },
-                                "constructInfo": {
-                                  "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
-                                  "version": "2.88.0"
-                                }
-                              }
-                            },
-                            "constructInfo": {
-                              "fqn": "aws-cdk-lib.aws_apigateway.Method",
-                              "version": "2.88.0"
-                            }
-                          },
-                          "GET": {
-                            "id": "GET",
-                            "path": "RestAPIStack/RestAPI/Default/movies/{movieId}/GET",
-                            "children": {
-                              "ApiPermission.RestAPIStackRestAPIBD91D303.GET..movies.{movieId}": {
-                                "id": "ApiPermission.RestAPIStackRestAPIBD91D303.GET..movies.{movieId}",
-                                "path": "RestAPIStack/RestAPI/Default/movies/{movieId}/GET/ApiPermission.RestAPIStackRestAPIBD91D303.GET..movies.{movieId}",
-                                "attributes": {
-                                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
-                                  "aws:cdk:cloudformation:props": {
-                                    "action": "lambda:InvokeFunction",
-                                    "functionName": {
-                                      "Fn::GetAtt": [
-                                        "GetMovieByIdFn429FC61F",
-                                        "Arn"
-                                      ]
-                                    },
-                                    "principal": "apigateway.amazonaws.com",
-                                    "sourceArn": {
-                                      "Fn::Join": [
-                                        "",
-                                        [
-                                          "arn:aws:execute-api:eu-west-1:",
-                                          {
-                                            "Ref": "AWS::AccountId"
-                                          },
-                                          ":",
-                                          {
-                                            "Ref": "RestAPI1CC12F26"
-                                          },
-                                          "/",
-                                          {
-                                            "Ref": "RestAPIDeploymentStagedev1DE74094"
-                                          },
-                                          "/GET/movies/*"
-                                        ]
-                                      ]
-                                    }
-                                  }
-                                },
-                                "constructInfo": {
-                                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
-                                  "version": "2.88.0"
-                                }
-                              },
-                              "ApiPermission.Test.RestAPIStackRestAPIBD91D303.GET..movies.{movieId}": {
-                                "id": "ApiPermission.Test.RestAPIStackRestAPIBD91D303.GET..movies.{movieId}",
-                                "path": "RestAPIStack/RestAPI/Default/movies/{movieId}/GET/ApiPermission.Test.RestAPIStackRestAPIBD91D303.GET..movies.{movieId}",
-                                "attributes": {
-                                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
-                                  "aws:cdk:cloudformation:props": {
-                                    "action": "lambda:InvokeFunction",
-                                    "functionName": {
-                                      "Fn::GetAtt": [
-                                        "GetMovieByIdFn429FC61F",
-                                        "Arn"
-                                      ]
-                                    },
-                                    "principal": "apigateway.amazonaws.com",
-                                    "sourceArn": {
-                                      "Fn::Join": [
-                                        "",
-                                        [
-                                          "arn:aws:execute-api:eu-west-1:",
-                                          {
-                                            "Ref": "AWS::AccountId"
-                                          },
-                                          ":",
-                                          {
-                                            "Ref": "RestAPI1CC12F26"
-                                          },
-                                          "/test-invoke-stage/GET/movies/*"
-                                        ]
-                                      ]
-                                    }
-                                  }
-                                },
-                                "constructInfo": {
-                                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
-                                  "version": "2.88.0"
-                                }
-                              },
-                              "Resource": {
-                                "id": "Resource",
-                                "path": "RestAPIStack/RestAPI/Default/movies/{movieId}/GET/Resource",
-                                "attributes": {
-                                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
-                                  "aws:cdk:cloudformation:props": {
-                                    "authorizationType": "NONE",
-                                    "httpMethod": "GET",
-                                    "integration": {
-                                      "type": "AWS_PROXY",
-                                      "uri": {
-                                        "Fn::Join": [
-                                          "",
-                                          [
-                                            "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/",
-                                            {
-                                              "Fn::GetAtt": [
-                                                "GetMovieByIdFn429FC61F",
-                                                "Arn"
-                                              ]
-                                            },
-                                            "/invocations"
-                                          ]
-                                        ]
-                                      },
-                                      "integrationHttpMethod": "POST",
-                                      "requestParameters": {
-                                        "integration.request.querystring.cast": "'true'"
-                                      }
-                                    },
-                                    "resourceId": {
-                                      "Ref": "RestAPImoviesmovieId3DE0D522"
-                                    },
-                                    "restApiId": {
-                                      "Ref": "RestAPI1CC12F26"
-                                    }
-                                  }
-                                },
-                                "constructInfo": {
-                                  "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
-                                  "version": "2.88.0"
-                                }
-                              }
-                            },
-                            "constructInfo": {
-                              "fqn": "aws-cdk-lib.aws_apigateway.Method",
-                              "version": "2.88.0"
-                            }
-                          }
-                        },
-                        "constructInfo": {
-                          "fqn": "aws-cdk-lib.aws_apigateway.Resource",
-                          "version": "2.88.0"
-                        }
-                      },
                       "POST": {
                         "id": "POST",
                         "path": "RestAPIStack/RestAPI/Default/movies/POST",
@@ -2372,6 +2222,227 @@
                           "version": "2.88.0"
                         }
                       },
+                      "{movieId}": {
+                        "id": "{movieId}",
+                        "path": "RestAPIStack/RestAPI/Default/movies/{movieId}",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "RestAPIStack/RestAPI/Default/movies/{movieId}/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::ApiGateway::Resource",
+                              "aws:cdk:cloudformation:props": {
+                                "parentId": {
+                                  "Ref": "RestAPImoviesA51CB040"
+                                },
+                                "pathPart": "{movieId}",
+                                "restApiId": {
+                                  "Ref": "RestAPI1CC12F26"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.CfnResource",
+                              "version": "2.88.0"
+                            }
+                          },
+                          "OPTIONS": {
+                            "id": "OPTIONS",
+                            "path": "RestAPIStack/RestAPI/Default/movies/{movieId}/OPTIONS",
+                            "children": {
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "RestAPIStack/RestAPI/Default/movies/{movieId}/OPTIONS/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                  "aws:cdk:cloudformation:props": {
+                                    "apiKeyRequired": false,
+                                    "authorizationType": "NONE",
+                                    "httpMethod": "OPTIONS",
+                                    "integration": {
+                                      "type": "MOCK",
+                                      "requestTemplates": {
+                                        "application/json": "{ statusCode: 200 }"
+                                      },
+                                      "integrationResponses": [
+                                        {
+                                          "statusCode": "204",
+                                          "responseParameters": {
+                                            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date'",
+                                            "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                            "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,POST,PUT,PATCH,DELETE'",
+                                            "method.response.header.Access-Control-Allow-Credentials": "'true'"
+                                          }
+                                        }
+                                      ]
+                                    },
+                                    "methodResponses": [
+                                      {
+                                        "statusCode": "204",
+                                        "responseParameters": {
+                                          "method.response.header.Access-Control-Allow-Headers": true,
+                                          "method.response.header.Access-Control-Allow-Origin": true,
+                                          "method.response.header.Access-Control-Allow-Methods": true,
+                                          "method.response.header.Access-Control-Allow-Credentials": true
+                                        }
+                                      }
+                                    ],
+                                    "resourceId": {
+                                      "Ref": "RestAPImoviesmovieId3DE0D522"
+                                    },
+                                    "restApiId": {
+                                      "Ref": "RestAPI1CC12F26"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                  "version": "2.88.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                              "version": "2.88.0"
+                            }
+                          },
+                          "GET": {
+                            "id": "GET",
+                            "path": "RestAPIStack/RestAPI/Default/movies/{movieId}/GET",
+                            "children": {
+                              "ApiPermission.RestAPIStackRestAPIBD91D303.GET..movies.{movieId}": {
+                                "id": "ApiPermission.RestAPIStackRestAPIBD91D303.GET..movies.{movieId}",
+                                "path": "RestAPIStack/RestAPI/Default/movies/{movieId}/GET/ApiPermission.RestAPIStackRestAPIBD91D303.GET..movies.{movieId}",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                  "aws:cdk:cloudformation:props": {
+                                    "action": "lambda:InvokeFunction",
+                                    "functionName": {
+                                      "Fn::GetAtt": [
+                                        "GetMovieByIdFn429FC61F",
+                                        "Arn"
+                                      ]
+                                    },
+                                    "principal": "apigateway.amazonaws.com",
+                                    "sourceArn": {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:aws:execute-api:eu-west-1:",
+                                          {
+                                            "Ref": "AWS::AccountId"
+                                          },
+                                          ":",
+                                          {
+                                            "Ref": "RestAPI1CC12F26"
+                                          },
+                                          "/",
+                                          {
+                                            "Ref": "RestAPIDeploymentStagedev1DE74094"
+                                          },
+                                          "/GET/movies/*"
+                                        ]
+                                      ]
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                  "version": "2.88.0"
+                                }
+                              },
+                              "ApiPermission.Test.RestAPIStackRestAPIBD91D303.GET..movies.{movieId}": {
+                                "id": "ApiPermission.Test.RestAPIStackRestAPIBD91D303.GET..movies.{movieId}",
+                                "path": "RestAPIStack/RestAPI/Default/movies/{movieId}/GET/ApiPermission.Test.RestAPIStackRestAPIBD91D303.GET..movies.{movieId}",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                  "aws:cdk:cloudformation:props": {
+                                    "action": "lambda:InvokeFunction",
+                                    "functionName": {
+                                      "Fn::GetAtt": [
+                                        "GetMovieByIdFn429FC61F",
+                                        "Arn"
+                                      ]
+                                    },
+                                    "principal": "apigateway.amazonaws.com",
+                                    "sourceArn": {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:aws:execute-api:eu-west-1:",
+                                          {
+                                            "Ref": "AWS::AccountId"
+                                          },
+                                          ":",
+                                          {
+                                            "Ref": "RestAPI1CC12F26"
+                                          },
+                                          "/test-invoke-stage/GET/movies/*"
+                                        ]
+                                      ]
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                  "version": "2.88.0"
+                                }
+                              },
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "RestAPIStack/RestAPI/Default/movies/{movieId}/GET/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                  "aws:cdk:cloudformation:props": {
+                                    "authorizationType": "NONE",
+                                    "httpMethod": "GET",
+                                    "integration": {
+                                      "type": "AWS_PROXY",
+                                      "uri": {
+                                        "Fn::Join": [
+                                          "",
+                                          [
+                                            "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/",
+                                            {
+                                              "Fn::GetAtt": [
+                                                "GetMovieByIdFn429FC61F",
+                                                "Arn"
+                                              ]
+                                            },
+                                            "/invocations"
+                                          ]
+                                        ]
+                                      },
+                                      "integrationHttpMethod": "POST",
+                                      "requestParameters": {
+                                        "integration.request.querystring.cast": "'true'"
+                                      }
+                                    },
+                                    "resourceId": {
+                                      "Ref": "RestAPImoviesmovieId3DE0D522"
+                                    },
+                                    "restApiId": {
+                                      "Ref": "RestAPI1CC12F26"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                  "version": "2.88.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                              "version": "2.88.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.Resource",
+                          "version": "2.88.0"
+                        }
+                      },
                       "cast": {
                         "id": "cast",
                         "path": "RestAPIStack/RestAPI/Default/movies/cast",
@@ -2567,6 +2638,224 @@
                                     },
                                     "resourceId": {
                                       "Ref": "RestAPImoviescastA509B28E"
+                                    },
+                                    "restApiId": {
+                                      "Ref": "RestAPI1CC12F26"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                  "version": "2.88.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                              "version": "2.88.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.Resource",
+                          "version": "2.88.0"
+                        }
+                      },
+                      "review": {
+                        "id": "review",
+                        "path": "RestAPIStack/RestAPI/Default/movies/review",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "RestAPIStack/RestAPI/Default/movies/review/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::ApiGateway::Resource",
+                              "aws:cdk:cloudformation:props": {
+                                "parentId": {
+                                  "Ref": "RestAPImoviesA51CB040"
+                                },
+                                "pathPart": "review",
+                                "restApiId": {
+                                  "Ref": "RestAPI1CC12F26"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.CfnResource",
+                              "version": "2.88.0"
+                            }
+                          },
+                          "OPTIONS": {
+                            "id": "OPTIONS",
+                            "path": "RestAPIStack/RestAPI/Default/movies/review/OPTIONS",
+                            "children": {
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "RestAPIStack/RestAPI/Default/movies/review/OPTIONS/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                  "aws:cdk:cloudformation:props": {
+                                    "apiKeyRequired": false,
+                                    "authorizationType": "NONE",
+                                    "httpMethod": "OPTIONS",
+                                    "integration": {
+                                      "type": "MOCK",
+                                      "requestTemplates": {
+                                        "application/json": "{ statusCode: 200 }"
+                                      },
+                                      "integrationResponses": [
+                                        {
+                                          "statusCode": "204",
+                                          "responseParameters": {
+                                            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date'",
+                                            "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                            "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,POST,PUT,PATCH,DELETE'",
+                                            "method.response.header.Access-Control-Allow-Credentials": "'true'"
+                                          }
+                                        }
+                                      ]
+                                    },
+                                    "methodResponses": [
+                                      {
+                                        "statusCode": "204",
+                                        "responseParameters": {
+                                          "method.response.header.Access-Control-Allow-Headers": true,
+                                          "method.response.header.Access-Control-Allow-Origin": true,
+                                          "method.response.header.Access-Control-Allow-Methods": true,
+                                          "method.response.header.Access-Control-Allow-Credentials": true
+                                        }
+                                      }
+                                    ],
+                                    "resourceId": {
+                                      "Ref": "RestAPImoviesreviewD55590C2"
+                                    },
+                                    "restApiId": {
+                                      "Ref": "RestAPI1CC12F26"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                  "version": "2.88.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                              "version": "2.88.0"
+                            }
+                          },
+                          "POST": {
+                            "id": "POST",
+                            "path": "RestAPIStack/RestAPI/Default/movies/review/POST",
+                            "children": {
+                              "ApiPermission.RestAPIStackRestAPIBD91D303.POST..movies.review": {
+                                "id": "ApiPermission.RestAPIStackRestAPIBD91D303.POST..movies.review",
+                                "path": "RestAPIStack/RestAPI/Default/movies/review/POST/ApiPermission.RestAPIStackRestAPIBD91D303.POST..movies.review",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                  "aws:cdk:cloudformation:props": {
+                                    "action": "lambda:InvokeFunction",
+                                    "functionName": {
+                                      "Fn::GetAtt": [
+                                        "AddReviewFnE8F4E4BE",
+                                        "Arn"
+                                      ]
+                                    },
+                                    "principal": "apigateway.amazonaws.com",
+                                    "sourceArn": {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:aws:execute-api:eu-west-1:",
+                                          {
+                                            "Ref": "AWS::AccountId"
+                                          },
+                                          ":",
+                                          {
+                                            "Ref": "RestAPI1CC12F26"
+                                          },
+                                          "/",
+                                          {
+                                            "Ref": "RestAPIDeploymentStagedev1DE74094"
+                                          },
+                                          "/POST/movies/review"
+                                        ]
+                                      ]
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                  "version": "2.88.0"
+                                }
+                              },
+                              "ApiPermission.Test.RestAPIStackRestAPIBD91D303.POST..movies.review": {
+                                "id": "ApiPermission.Test.RestAPIStackRestAPIBD91D303.POST..movies.review",
+                                "path": "RestAPIStack/RestAPI/Default/movies/review/POST/ApiPermission.Test.RestAPIStackRestAPIBD91D303.POST..movies.review",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                  "aws:cdk:cloudformation:props": {
+                                    "action": "lambda:InvokeFunction",
+                                    "functionName": {
+                                      "Fn::GetAtt": [
+                                        "AddReviewFnE8F4E4BE",
+                                        "Arn"
+                                      ]
+                                    },
+                                    "principal": "apigateway.amazonaws.com",
+                                    "sourceArn": {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:aws:execute-api:eu-west-1:",
+                                          {
+                                            "Ref": "AWS::AccountId"
+                                          },
+                                          ":",
+                                          {
+                                            "Ref": "RestAPI1CC12F26"
+                                          },
+                                          "/test-invoke-stage/POST/movies/review"
+                                        ]
+                                      ]
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                  "version": "2.88.0"
+                                }
+                              },
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "RestAPIStack/RestAPI/Default/movies/review/POST/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                  "aws:cdk:cloudformation:props": {
+                                    "authorizationType": "NONE",
+                                    "httpMethod": "POST",
+                                    "integration": {
+                                      "type": "AWS_PROXY",
+                                      "uri": {
+                                        "Fn::Join": [
+                                          "",
+                                          [
+                                            "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/",
+                                            {
+                                              "Fn::GetAtt": [
+                                                "AddReviewFnE8F4E4BE",
+                                                "Arn"
+                                              ]
+                                            },
+                                            "/invocations"
+                                          ]
+                                        ]
+                                      },
+                                      "integrationHttpMethod": "POST"
+                                    },
+                                    "resourceId": {
+                                      "Ref": "RestAPImoviesreviewD55590C2"
                                     },
                                     "restApiId": {
                                       "Ref": "RestAPI1CC12F26"

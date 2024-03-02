@@ -348,7 +348,7 @@ export const movieCasts: MovieCast[] = [
     roleDescription: "description of character 3",
   },
 ];
-export const movieReviews: MovieReview[] = [
+export const movieReview: MovieReview[] = [
   {
     movieId: 1234,
     reviewerName: "Haoxuan Gu",
