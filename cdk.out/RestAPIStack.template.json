@@ -24,6 +24,60 @@
     "aws:cdk:path": "RestAPIStack/MoviesTable/Resource"
    }
   },
+  "MovieCastTableE4F7E4C8": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "movieId",
+      "AttributeType": "N"
+     },
+     {
+      "AttributeName": "actorName",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "roleName",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "movieId",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "actorName",
+      "KeyType": "RANGE"
+     }
+    ],
+    "LocalSecondaryIndexes": [
+     {
+      "IndexName": "roleIx",
+      "KeySchema": [
+       {
+        "AttributeName": "movieId",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "roleName",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "TableName": "MovieCast"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "RestAPIStack/MovieCastTable/Resource"
+   }
+  },
   "GetMovieByIdFnServiceRole129ED770": {
    "Type": "AWS::IAM::Role",
    "Properties": {
@@ -78,8 +132,28 @@
        "Resource": [
         {
          "Fn::GetAtt": [
+          "MovieCastTableE4F7E4C8",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
           "MoviesTable0F76A3E4",
           "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "MovieCastTableE4F7E4C8",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
          ]
         },
         {
@@ -115,8 +189,11 @@
     },
     "Environment": {
      "Variables": {
-      "TABLE_NAME": {
+      "TABLE_NAME_MOVIES": {
        "Ref": "MoviesTable0F76A3E4"
+      },
+      "TABLE_NAME_MOVIE_CASTS": {
+       "Ref": "MovieCastTableE4F7E4C8"
       },
       "REGION": "eu-west-1",
       "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
@@ -264,6 +341,503 @@
     "aws:asset:property": "Code"
    }
   },
+  "AddMovieFnServiceRoleB1F9B436": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "RestAPIStack/AddMovieFn/ServiceRole/Resource"
+   }
+  },
+  "AddMovieFnServiceRoleDefaultPolicy28168983": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "MoviesTable0F76A3E4",
+          "Arn"
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "AddMovieFnServiceRoleDefaultPolicy28168983",
+    "Roles": [
+     {
+      "Ref": "AddMovieFnServiceRoleB1F9B436"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "RestAPIStack/AddMovieFn/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "AddMovieFnA0261A58": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Architectures": [
+     "arm64"
+    ],
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
+     },
+     "S3Key": "195afba3173861b781b2c3a5bd457ba23531060190b1a6f13ba0e9b4ff9d8df6.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLE_NAME": {
+       "Ref": "MoviesTable0F76A3E4"
+      },
+      "REGION": "eu-west-1",
+      "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
+     }
+    },
+    "Handler": "index.handler",
+    "MemorySize": 128,
+    "Role": {
+     "Fn::GetAtt": [
+      "AddMovieFnServiceRoleB1F9B436",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs16.x",
+    "Timeout": 10
+   },
+   "DependsOn": [
+    "AddMovieFnServiceRoleDefaultPolicy28168983",
+    "AddMovieFnServiceRoleB1F9B436"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "RestAPIStack/AddMovieFn/Resource",
+    "aws:asset:path": "/Users/guhaoxuan/Desktop/Distributed System/Assignment1",
+    "aws:asset:is-bundled": true,
+    "aws:asset:property": "Code"
+   }
+  },
+  "DeleteMovieFnServiceRole38DEA1BA": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "RestAPIStack/DeleteMovieFn/ServiceRole/Resource"
+   }
+  },
+  "DeleteMovieFnServiceRoleDefaultPolicy387CD24D": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "dynamodb:*",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "MoviesTable0F76A3E4",
+          "Arn"
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "DeleteMovieFnServiceRoleDefaultPolicy387CD24D",
+    "Roles": [
+     {
+      "Ref": "DeleteMovieFnServiceRole38DEA1BA"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "RestAPIStack/DeleteMovieFn/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "DeleteMovieFnCF59BB54": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Architectures": [
+     "arm64"
+    ],
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
+     },
+     "S3Key": "e700c88ad5077fb9d895fec0d379897eba100187ac35902b5aebb86a7ece62ef.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLE_NAME": {
+       "Ref": "MoviesTable0F76A3E4"
+      },
+      "REGION": "eu-west-1",
+      "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
+     }
+    },
+    "Handler": "index.handler",
+    "MemorySize": 128,
+    "Role": {
+     "Fn::GetAtt": [
+      "DeleteMovieFnServiceRole38DEA1BA",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs16.x",
+    "Timeout": 10
+   },
+   "DependsOn": [
+    "DeleteMovieFnServiceRoleDefaultPolicy387CD24D",
+    "DeleteMovieFnServiceRole38DEA1BA"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "RestAPIStack/DeleteMovieFn/Resource",
+    "aws:asset:path": "/Users/guhaoxuan/Desktop/Distributed System/Assignment1",
+    "aws:asset:is-bundled": true,
+    "aws:asset:property": "Code"
+   }
+  },
+  "GetCastMemberFnServiceRoleE3D31A5A": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "RestAPIStack/GetCastMemberFn/ServiceRole/Resource"
+   }
+  },
+  "GetCastMemberFnServiceRoleDefaultPolicyE149AAD0": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:Scan"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "MovieCastTableE4F7E4C8",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "MovieCastTableE4F7E4C8",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "GetCastMemberFnServiceRoleDefaultPolicyE149AAD0",
+    "Roles": [
+     {
+      "Ref": "GetCastMemberFnServiceRoleE3D31A5A"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "RestAPIStack/GetCastMemberFn/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "GetCastMemberFn1BEFFC9C": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Architectures": [
+     "arm64"
+    ],
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
+     },
+     "S3Key": "c3a8641513631fb144a0fa4a7b27c2a1de405099c318fd0476c4c55129a81e10.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLE_NAME": {
+       "Ref": "MovieCastTableE4F7E4C8"
+      },
+      "REGION": "eu-west-1",
+      "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
+     }
+    },
+    "Handler": "index.handler",
+    "MemorySize": 128,
+    "Role": {
+     "Fn::GetAtt": [
+      "GetCastMemberFnServiceRoleE3D31A5A",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs16.x",
+    "Timeout": 10
+   },
+   "DependsOn": [
+    "GetCastMemberFnServiceRoleDefaultPolicyE149AAD0",
+    "GetCastMemberFnServiceRoleE3D31A5A"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "RestAPIStack/GetCastMemberFn/Resource",
+    "aws:asset:path": "/Users/guhaoxuan/Desktop/Distributed System/Assignment1",
+    "aws:asset:is-bundled": true,
+    "aws:asset:property": "Code"
+   }
+  },
+  "GetMovieIncluedeCastFnServiceRoleC25B9FF4": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "RestAPIStack/GetMovieIncluedeCastFn/ServiceRole/Resource"
+   }
+  },
+  "GetMovieIncluedeCastFnServiceRoleDefaultPolicyB0A9F8ED": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:Scan"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "MovieCastTableE4F7E4C8",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "MovieCastTableE4F7E4C8",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "GetMovieIncluedeCastFnServiceRoleDefaultPolicyB0A9F8ED",
+    "Roles": [
+     {
+      "Ref": "GetMovieIncluedeCastFnServiceRoleC25B9FF4"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "RestAPIStack/GetMovieIncluedeCastFn/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "GetMovieIncluedeCastFnA2373128": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Architectures": [
+     "arm64"
+    ],
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
+     },
+     "S3Key": "f1e3c10577a651e3138cefd9478c84eeb8dbac0fc6b8117a15b72d5a6e9ecc45.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLE_NAME": {
+       "Ref": "MovieCastTableE4F7E4C8"
+      },
+      "REGION": "eu-west-1",
+      "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
+     }
+    },
+    "Handler": "index.handler",
+    "MemorySize": 128,
+    "Role": {
+     "Fn::GetAtt": [
+      "GetMovieIncluedeCastFnServiceRoleC25B9FF4",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs18.x",
+    "Timeout": 10
+   },
+   "DependsOn": [
+    "GetMovieIncluedeCastFnServiceRoleDefaultPolicyB0A9F8ED",
+    "GetMovieIncluedeCastFnServiceRoleC25B9FF4"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "RestAPIStack/GetMovieIncluedeCastFn/Resource",
+    "aws:asset:path": "/Users/guhaoxuan/Desktop/Distributed System/Assignment1",
+    "aws:asset:is-bundled": true,
+    "aws:asset:property": "Code"
+   }
+  },
   "moviesddbInitDataA13BB07E": {
    "Type": "Custom::AWS",
    "Properties": {
@@ -281,7 +855,11 @@
        {
         "Ref": "MoviesTable0F76A3E4"
        },
-       "\":[{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/sRLC052ieEzkQs9dEtPMfFxYkej.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"878\"}]},\"id\":{\"N\":\"848326\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Rebel Moon - Part One: A Child of Fire\"},\"overview\":{\"S\":\"When a peaceful colony on the edge of the galaxy finds itself threatened by the armies of the tyrannical Regent Balisarius, they dispatch Kora, a young woman with a mysterious past, to seek out warriors from neighboring planets to help them take a stand.\"},\"popularity\":{\"N\":\"2136.3\"},\"poster_path\":{\"S\":\"/6epeijccmJlnfvFitfGyfT7njav.jpg\"},\"release_date\":{\"S\":\"2023-12-15\"},\"title\":{\"S\":\"Rebel Moon - Part One: A Child of Fire\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"6.4\"},\"vote_count\":{\"N\":\"750\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/jXJxMcVoEuXzym3vFnjqDW4ifo6.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"28\"},{\"N\":\"12\"},{\"N\":\"14\"}]},\"id\":{\"N\":\"572802\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Aquaman and the Lost Kingdom\"},\"overview\":{\"S\":\"Black Manta, still driven by the need to avenge his father's death and wielding the power of the mythic Black Trident, will stop at nothing to take Aquaman down once and for all. To defeat him, Aquaman must turn to his imprisoned brother Orm, the former King of Atlantis, to forge an unlikely alliance in order to save the world from irreversible destruction.\"},\"popularity\":{\"N\":\"1605.303\"},\"poster_path\":{\"S\":\"/8xV47NDrjdZDpkVcCFqkdHa3T0C.jpg\"},\"release_date\":{\"S\":\"2023-12-20\"},\"title\":{\"S\":\"Aquaman and the Lost Kingdom\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"6.5\"},\"vote_count\":{\"N\":\"299\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/5a4JdoFwll5DRtKMe7JLuGQ9yJm.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"18\"},{\"N\":\"878\"},{\"N\":\"28\"}]},\"id\":{\"N\":\"695721\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"The Hunger Games: The Ballad of Songbirds & Snakes\"},\"overview\":{\"S\":\"64 years before he becomes the tyrannical president of Panem, Coriolanus Snow sees a chance for a change in fortunes when he mentors Lucy Gray Baird, the female tribute from District 12.\"},\"popularity\":{\"N\":\"1509.974\"},\"poster_path\":{\"S\":\"/mBaXZ95R2OxueZhvQbcEWy2DqyO.jpg\"},\"release_date\":{\"S\":\"2023-11-15\"},\"title\":{\"S\":\"The Hunger Games: The Ballad of Songbirds & Snakes\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"7.2\"},\"vote_count\":{\"N\":\"1181\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/15Fe18IglCCP1jJoj5F529on0IA.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"28\"},{\"N\":\"35\"}]},\"id\":{\"N\":\"1029575\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"The Family Plan\"},\"overview\":{\"S\":\"Dan Morgan is many things: a devoted husband, a loving father, a celebrated car salesman. He's also a former assassin. And when his past catches up to his present, he's forced to take his unsuspecting family on a road trip unlike any other.\"},\"popularity\":{\"N\":\"954.371\"},\"poster_path\":{\"S\":\"/jLLtx3nTRSLGPAKl4RoIv1FbEBr.jpg\"},\"release_date\":{\"S\":\"2023-12-14\"},\"title\":{\"S\":\"The Family Plan\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"7.3\"},\"vote_count\":{\"N\":\"457\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/bmlkLCjrIWnnZzdAQ4uNPG9JFdj.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"35\"},{\"N\":\"10751\"},{\"N\":\"14\"}]},\"id\":{\"N\":\"787699\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Wonka\"},\"overview\":{\"S\":\"Willy Wonka – chock-full of ideas and determined to change the world one delectable bite at a time – is proof that the best things in life begin with a dream, and if you’re lucky enough to meet Willy Wonka, anything is possible.\"},\"popularity\":{\"N\":\"949.214\"},\"poster_path\":{\"S\":\"/qhb1qOilapbapxWQn9jtRCMwXJF.jpg\"},\"release_date\":{\"S\":\"2023-12-06\"},\"title\":{\"S\":\"Wonka\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"7.2\"},\"vote_count\":{\"N\":\"703\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/gg4zZoTggZmpAQ32qIrP5dtnkEZ.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"28\"},{\"N\":\"80\"}]},\"id\":{\"N\":\"891699\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Silent Night\"},\"overview\":{\"S\":\"A tormented father witnesses his young son die when caught in a gang's crossfire on Christmas Eve. While recovering from a wound that costs him his voice, he makes vengeance his life's mission and embarks on a punishing training regimen in order to avenge his son's death.\"},\"popularity\":{\"N\":\"945.22\"},\"poster_path\":{\"S\":\"/tlcuhdNMKNGEVpGqBZrAaOOf1A6.jpg\"},\"release_date\":{\"S\":\"2023-11-30\"},\"title\":{\"S\":\"Silent Night\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"5.8\"},\"vote_count\":{\"N\":\"181\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/1pFSJ9lxMYLkgLS5gmnwm1AEiqx.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"878\"}]},\"id\":{\"N\":\"798141\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Doors\"},\"overview\":{\"S\":\"Without warning, millions of mysterious alien “doors” suddenly appear around the globe. In a rush to determine the reason for their arrival, mankind must work together to understand the purpose of these cosmic anomalies.\"},\"popularity\":{\"N\":\"752.379\"},\"poster_path\":{\"S\":\"/pGPUXyhQTOqskKdDOD3Fmicqfc0.jpg\"},\"release_date\":{\"S\":\"2021-03-23\"},\"title\":{\"S\":\"Doors\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"5\"},\"vote_count\":{\"N\":\"119\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/fm6KqXpk3M2HVveHwCrBSSBaO0V.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"18\"},{\"N\":\"36\"}]},\"id\":{\"N\":\"872585\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Oppenheimer\"},\"overview\":{\"S\":\"The story of J. Robert Oppenheimer's role in the development of the atomic bomb during World War II.\"},\"popularity\":{\"N\":\"746.349\"},\"poster_path\":{\"S\":\"/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg\"},\"release_date\":{\"S\":\"2023-07-19\"},\"title\":{\"S\":\"Oppenheimer\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"8.1\"},\"vote_count\":{\"N\":\"5713\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/1jITxVJhkiFJuQuj8NcPLmDNtJg.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"18\"},{\"N\":\"35\"},{\"N\":\"53\"}]},\"id\":{\"N\":\"930564\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Saltburn\"},\"overview\":{\"S\":\"Struggling to find his place at Oxford University, student Oliver Quick finds himself drawn into the world of the charming and aristocratic Felix Catton, who invites him to Saltburn, his eccentric family's sprawling estate, for a summer never to be forgotten.\"},\"popularity\":{\"N\":\"658.86\"},\"poster_path\":{\"S\":\"/qjhahNLSZ705B5JP92YMEYPocPz.jpg\"},\"release_date\":{\"S\":\"2023-11-16\"},\"title\":{\"S\":\"Saltburn\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"7.1\"},\"vote_count\":{\"N\":\"473\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/1X7vow16X7CnCoexXh4H4F2yDJv.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"80\"},{\"N\":\"18\"},{\"N\":\"36\"}]},\"id\":{\"N\":\"466420\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Killers of the Flower Moon\"},\"overview\":{\"S\":\"When oil is discovered in 1920s Oklahoma under Osage Nation land, the Osage people are murdered one by one—until the FBI steps in to unravel the mystery.\"},\"popularity\":{\"N\":\"612.671\"},\"poster_path\":{\"S\":\"/dB6Krk806zeqd0YNp2ngQ9zXteH.jpg\"},\"release_date\":{\"S\":\"2023-10-18\"},\"title\":{\"S\":\"Killers of the Flower Moon\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"7.5\"},\"vote_count\":{\"N\":\"1647\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/ktHEdqmMWC1wdfPRMRCTZe2OISL.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"27\"},{\"N\":\"9648\"},{\"N\":\"53\"}]},\"id\":{\"N\":\"1071215\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Thanksgiving\"},\"overview\":{\"S\":\"After a Black Friday riot ends in tragedy, a mysterious Thanksgiving-inspired killer terrorizes Plymouth, Massachusetts - the birthplace of the holiday. Picking off residents one by one, what begins as random revenge killings are soon revealed to be part of a larger, sinister holiday plan.\"},\"popularity\":{\"N\":\"606.566\"},\"poster_path\":{\"S\":\"/f5f3TEVst1nHHyqgn7Z3tlwnBIH.jpg\"},\"release_date\":{\"S\":\"2023-11-16\"},\"title\":{\"S\":\"Thanksgiving\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"6.7\"},\"vote_count\":{\"N\":\"347\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/k1KrbaCMACQiq7EA0Yhw3bdzMv7.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"16\"},{\"N\":\"10751\"},{\"N\":\"10402\"},{\"N\":\"14\"},{\"N\":\"35\"}]},\"id\":{\"N\":\"901362\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Trolls Band Together\"},\"overview\":{\"S\":\"When Branch's brother, Floyd, is kidnapped for his musical talents by a pair of nefarious pop-star villains, Branch and Poppy embark on a harrowing and emotional journey to reunite the other brothers and rescue Floyd from a fate even worse than pop-culture obscurity.\"},\"popularity\":{\"N\":\"563.374\"},\"poster_path\":{\"S\":\"/bkpPTZUdq31UGDovmszsg2CchiI.jpg\"},\"release_date\":{\"S\":\"2023-10-12\"},\"title\":{\"S\":\"Trolls Band Together\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"7.2\"},\"vote_count\":{\"N\":\"436\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/4XM8DUTQb3lhLemJC51Jx4a2EuA.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"28\"},{\"N\":\"80\"},{\"N\":\"53\"}]},\"id\":{\"N\":\"385687\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Fast X\"},\"overview\":{\"S\":\"Over many missions and against impossible odds, Dom Toretto and his family have outsmarted, out-nerved and outdriven every foe in their path. Now, they confront the most lethal opponent they've ever faced: A terrifying threat emerging from the shadows of the past who's fueled by blood revenge, and who is determined to shatter this family and destroy everything—and everyone—that Dom loves, forever.\"},\"popularity\":{\"N\":\"537.344\"},\"poster_path\":{\"S\":\"/fiVW06jE7z9YnO4trhaMEdclSiC.jpg\"},\"release_date\":{\"S\":\"2023-05-17\"},\"title\":{\"S\":\"Fast X\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"7.2\"},\"vote_count\":{\"N\":\"4566\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/hRPKfuotMeyRiXXGPKmmrVXD5DG.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"28\"}]},\"id\":{\"N\":\"504148\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"The Serpent\"},\"overview\":{\"S\":\"Top special agent Lucinda Kavsky works for a secret part of the CIA. She's given a special assignment but then set up by her own agency.\"},\"popularity\":{\"N\":\"530.362\"},\"poster_path\":{\"S\":\"/AvMoan3rxCDZpNf59BmAP2G8q5x.jpg\"},\"release_date\":{\"S\":\"2021-01-28\"},\"title\":{\"S\":\"The Serpent\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"3.8\"},\"vote_count\":{\"N\":\"12\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/kjQBrc00fB2RjHZB3PGR4w9ibpz.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"28\"},{\"N\":\"12\"},{\"N\":\"878\"}]},\"id\":{\"N\":\"670292\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"The Creator\"},\"overview\":{\"S\":\"Amid a future war between the human race and the forces of artificial intelligence, a hardened ex-special forces agent grieving the disappearance of his wife, is recruited to hunt down and kill the Creator, the elusive architect of advanced AI who has developed a mysterious weapon with the power to end the war—and mankind itself.\"},\"popularity\":{\"N\":\"519.619\"},\"poster_path\":{\"S\":\"/vBZ0qvaRxqEhZwl6LWmruJqWE8Z.jpg\"},\"release_date\":{\"S\":\"2023-09-27\"},\"title\":{\"S\":\"The Creator\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"7.2\"},\"vote_count\":{\"N\":\"1645\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/X8yF6STUk5Zr5nAuLBJiio8Sxh.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"18\"},{\"N\":\"10749\"}]},\"id\":{\"N\":\"1143183\"},\"original_language\":{\"S\":\"tl\"},\"original_title\":{\"S\":\"Rewind\"},\"overview\":{\"S\":\"Mary (Marian Rivera) loves John (Dingdong Dantes) for as long as she can remember. But after years of marriage, John's priorities shift, leading to a strained relationship with Mary, which causes a tragic accident that takes away Mary's life. Until one day, John gets an extraordinary proposition - to rewind time and save the life of the woman he loves.\"},\"popularity\":{\"N\":\"506.227\"},\"poster_path\":{\"S\":\"/vW80VheMJhHsj0pDVYJL3qAMWMd.jpg\"},\"release_date\":{\"S\":\"2023-12-25\"},\"title\":{\"S\":\"Rewind\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"0\"},\"vote_count\":{\"N\":\"0\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/4mmrgZW9bcgMRFdV1lCcXqCEXEr.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"28\"},{\"N\":\"18\"},{\"N\":\"12\"},{\"N\":\"9648\"},{\"N\":\"53\"}]},\"id\":{\"N\":\"755401\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Skydog\"},\"overview\":{\"S\":\"After a high school senior working on his pilot’s license rescues a dog named Oreo, he finds out his mom is a CIA agent who’s been captured. He teams up with Oreo and a new friend to find his mother and uncover double agents inside the CIA.\"},\"popularity\":{\"N\":\"504.779\"},\"poster_path\":{\"S\":\"/5M3bY1rl9QIQSmrAGPEt9qutj64.jpg\"},\"release_date\":{\"S\":\"2020-10-20\"},\"title\":{\"S\":\"Skydog\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"7.3\"},\"vote_count\":{\"N\":\"8\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/zIYROrkHJPYB3VTiW1L9QVgaQO.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"28\"},{\"N\":\"35\"}]},\"id\":{\"N\":\"897087\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Freelance\"},\"overview\":{\"S\":\"An ex-special forces operative takes a job to provide security for a journalist as she interviews a dictator, but a military coup breaks out in the middle of the interview, they are forced to escape into the jungle where they must survive.\"},\"popularity\":{\"N\":\"501.319\"},\"poster_path\":{\"S\":\"/7Bd4EUOqQDKZXA6Od5gkfzRNb0.jpg\"},\"release_date\":{\"S\":\"2023-10-05\"},\"title\":{\"S\":\"Freelance\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"6.5\"},\"vote_count\":{\"N\":\"390\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/t5zCBSB5xMDKcDqe91qahCOUYVV.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"27\"},{\"N\":\"9648\"}]},\"id\":{\"N\":\"507089\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Five Nights at Freddy's\"},\"overview\":{\"S\":\"Recently fired and desperate for work, a troubled young man named Mike agrees to take a position as a night security guard at an abandoned theme restaurant: Freddy Fazbear's Pizzeria. But he soon discovers that nothing at Freddy's is what it seems.\"},\"popularity\":{\"N\":\"496.682\"},\"poster_path\":{\"S\":\"/7BpNtNfxuocYEVREzVMO75hso1l.jpg\"},\"release_date\":{\"S\":\"2023-10-25\"},\"title\":{\"S\":\"Five Nights at Freddy's\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"7.8\"},\"vote_count\":{\"N\":\"2993\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/9jPoyxjiEYPylUIMI3Ntixf8z3M.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"16\"},{\"N\":\"12\"},{\"N\":\"35\"},{\"N\":\"10751\"}]},\"id\":{\"N\":\"520758\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Chicken Run: Dawn of the Nugget\"},\"overview\":{\"S\":\"A band of fearless chickens flock together to save poultry-kind from an unsettling new threat: a nearby farm that's cooking up something suspicious.\"},\"popularity\":{\"N\":\"494.214\"},\"poster_path\":{\"S\":\"/exNtEY8QUuQh9e23wSQjkPxKIU3.jpg\"},\"release_date\":{\"S\":\"2023-12-08\"},\"title\":{\"S\":\"Chicken Run: Dawn of the Nugget\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"7.4\"},\"vote_count\":{\"N\":\"325\"}}}}]}},\"physicalResourceId\":{\"id\":\"moviesddbInitData\"}}"
+       "\":[{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/sRLC052ieEzkQs9dEtPMfFxYkej.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"878\"}]},\"id\":{\"N\":\"1234\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Rebel Moon - Part One: A Child of Fire\"},\"overview\":{\"S\":\"When a peaceful colony on the edge of the galaxy finds itself threatened by the armies of the tyrannical Regent Balisarius, they dispatch Kora, a young woman with a mysterious past, to seek out warriors from neighboring planets to help them take a stand.\"},\"popularity\":{\"N\":\"2136.3\"},\"poster_path\":{\"S\":\"/6epeijccmJlnfvFitfGyfT7njav.jpg\"},\"release_date\":{\"S\":\"2023-12-15\"},\"title\":{\"S\":\"Rebel Moon - Part One: A Child of Fire\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"6.4\"},\"vote_count\":{\"N\":\"750\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/jXJxMcVoEuXzym3vFnjqDW4ifo6.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"28\"},{\"N\":\"12\"},{\"N\":\"14\"}]},\"id\":{\"N\":\"2345\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Aquaman and the Lost Kingdom\"},\"overview\":{\"S\":\"Black Manta, still driven by the need to avenge his father's death and wielding the power of the mythic Black Trident, will stop at nothing to take Aquaman down once and for all. To defeat him, Aquaman must turn to his imprisoned brother Orm, the former King of Atlantis, to forge an unlikely alliance in order to save the world from irreversible destruction.\"},\"popularity\":{\"N\":\"1605.303\"},\"poster_path\":{\"S\":\"/8xV47NDrjdZDpkVcCFqkdHa3T0C.jpg\"},\"release_date\":{\"S\":\"2023-12-20\"},\"title\":{\"S\":\"Aquaman and the Lost Kingdom\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"6.5\"},\"vote_count\":{\"N\":\"299\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/5a4JdoFwll5DRtKMe7JLuGQ9yJm.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"18\"},{\"N\":\"878\"},{\"N\":\"28\"}]},\"id\":{\"N\":\"695721\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"The Hunger Games: The Ballad of Songbirds & Snakes\"},\"overview\":{\"S\":\"64 years before he becomes the tyrannical president of Panem, Coriolanus Snow sees a chance for a change in fortunes when he mentors Lucy Gray Baird, the female tribute from District 12.\"},\"popularity\":{\"N\":\"1509.974\"},\"poster_path\":{\"S\":\"/mBaXZ95R2OxueZhvQbcEWy2DqyO.jpg\"},\"release_date\":{\"S\":\"2023-11-15\"},\"title\":{\"S\":\"The Hunger Games: The Ballad of Songbirds & Snakes\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"7.2\"},\"vote_count\":{\"N\":\"1181\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/15Fe18IglCCP1jJoj5F529on0IA.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"28\"},{\"N\":\"35\"}]},\"id\":{\"N\":\"1029575\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"The Family Plan\"},\"overview\":{\"S\":\"Dan Morgan is many things: a devoted husband, a loving father, a celebrated car salesman. He's also a former assassin. And when his past catches up to his present, he's forced to take his unsuspecting family on a road trip unlike any other.\"},\"popularity\":{\"N\":\"954.371\"},\"poster_path\":{\"S\":\"/jLLtx3nTRSLGPAKl4RoIv1FbEBr.jpg\"},\"release_date\":{\"S\":\"2023-12-14\"},\"title\":{\"S\":\"The Family Plan\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"7.3\"},\"vote_count\":{\"N\":\"457\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/bmlkLCjrIWnnZzdAQ4uNPG9JFdj.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"35\"},{\"N\":\"10751\"},{\"N\":\"14\"}]},\"id\":{\"N\":\"787699\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Wonka\"},\"overview\":{\"S\":\"Willy Wonka – chock-full of ideas and determined to change the world one delectable bite at a time – is proof that the best things in life begin with a dream, and if you’re lucky enough to meet Willy Wonka, anything is possible.\"},\"popularity\":{\"N\":\"949.214\"},\"poster_path\":{\"S\":\"/qhb1qOilapbapxWQn9jtRCMwXJF.jpg\"},\"release_date\":{\"S\":\"2023-12-06\"},\"title\":{\"S\":\"Wonka\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"7.2\"},\"vote_count\":{\"N\":\"703\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/gg4zZoTggZmpAQ32qIrP5dtnkEZ.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"28\"},{\"N\":\"80\"}]},\"id\":{\"N\":\"891699\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Silent Night\"},\"overview\":{\"S\":\"A tormented father witnesses his young son die when caught in a gang's crossfire on Christmas Eve. While recovering from a wound that costs him his voice, he makes vengeance his life's mission and embarks on a punishing training regimen in order to avenge his son's death.\"},\"popularity\":{\"N\":\"945.22\"},\"poster_path\":{\"S\":\"/tlcuhdNMKNGEVpGqBZrAaOOf1A6.jpg\"},\"release_date\":{\"S\":\"2023-11-30\"},\"title\":{\"S\":\"Silent Night\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"5.8\"},\"vote_count\":{\"N\":\"181\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/1pFSJ9lxMYLkgLS5gmnwm1AEiqx.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"878\"}]},\"id\":{\"N\":\"798141\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Doors\"},\"overview\":{\"S\":\"Without warning, millions of mysterious alien “doors” suddenly appear around the globe. In a rush to determine the reason for their arrival, mankind must work together to understand the purpose of these cosmic anomalies.\"},\"popularity\":{\"N\":\"752.379\"},\"poster_path\":{\"S\":\"/pGPUXyhQTOqskKdDOD3Fmicqfc0.jpg\"},\"release_date\":{\"S\":\"2021-03-23\"},\"title\":{\"S\":\"Doors\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"5\"},\"vote_count\":{\"N\":\"119\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/fm6KqXpk3M2HVveHwCrBSSBaO0V.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"18\"},{\"N\":\"36\"}]},\"id\":{\"N\":\"872585\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Oppenheimer\"},\"overview\":{\"S\":\"The story of J. Robert Oppenheimer's role in the development of the atomic bomb during World War II.\"},\"popularity\":{\"N\":\"746.349\"},\"poster_path\":{\"S\":\"/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg\"},\"release_date\":{\"S\":\"2023-07-19\"},\"title\":{\"S\":\"Oppenheimer\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"8.1\"},\"vote_count\":{\"N\":\"5713\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/1jITxVJhkiFJuQuj8NcPLmDNtJg.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"18\"},{\"N\":\"35\"},{\"N\":\"53\"}]},\"id\":{\"N\":\"930564\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Saltburn\"},\"overview\":{\"S\":\"Struggling to find his place at Oxford University, student Oliver Quick finds himself drawn into the world of the charming and aristocratic Felix Catton, who invites him to Saltburn, his eccentric family's sprawling estate, for a summer never to be forgotten.\"},\"popularity\":{\"N\":\"658.86\"},\"poster_path\":{\"S\":\"/qjhahNLSZ705B5JP92YMEYPocPz.jpg\"},\"release_date\":{\"S\":\"2023-11-16\"},\"title\":{\"S\":\"Saltburn\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"7.1\"},\"vote_count\":{\"N\":\"473\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/1X7vow16X7CnCoexXh4H4F2yDJv.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"80\"},{\"N\":\"18\"},{\"N\":\"36\"}]},\"id\":{\"N\":\"466420\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Killers of the Flower Moon\"},\"overview\":{\"S\":\"When oil is discovered in 1920s Oklahoma under Osage Nation land, the Osage people are murdered one by one—until the FBI steps in to unravel the mystery.\"},\"popularity\":{\"N\":\"612.671\"},\"poster_path\":{\"S\":\"/dB6Krk806zeqd0YNp2ngQ9zXteH.jpg\"},\"release_date\":{\"S\":\"2023-10-18\"},\"title\":{\"S\":\"Killers of the Flower Moon\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"7.5\"},\"vote_count\":{\"N\":\"1647\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/ktHEdqmMWC1wdfPRMRCTZe2OISL.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"27\"},{\"N\":\"9648\"},{\"N\":\"53\"}]},\"id\":{\"N\":\"1071215\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Thanksgiving\"},\"overview\":{\"S\":\"After a Black Friday riot ends in tragedy, a mysterious Thanksgiving-inspired killer terrorizes Plymouth, Massachusetts - the birthplace of the holiday. Picking off residents one by one, what begins as random revenge killings are soon revealed to be part of a larger, sinister holiday plan.\"},\"popularity\":{\"N\":\"606.566\"},\"poster_path\":{\"S\":\"/f5f3TEVst1nHHyqgn7Z3tlwnBIH.jpg\"},\"release_date\":{\"S\":\"2023-11-16\"},\"title\":{\"S\":\"Thanksgiving\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"6.7\"},\"vote_count\":{\"N\":\"347\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/k1KrbaCMACQiq7EA0Yhw3bdzMv7.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"16\"},{\"N\":\"10751\"},{\"N\":\"10402\"},{\"N\":\"14\"},{\"N\":\"35\"}]},\"id\":{\"N\":\"901362\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Trolls Band Together\"},\"overview\":{\"S\":\"When Branch's brother, Floyd, is kidnapped for his musical talents by a pair of nefarious pop-star villains, Branch and Poppy embark on a harrowing and emotional journey to reunite the other brothers and rescue Floyd from a fate even worse than pop-culture obscurity.\"},\"popularity\":{\"N\":\"563.374\"},\"poster_path\":{\"S\":\"/bkpPTZUdq31UGDovmszsg2CchiI.jpg\"},\"release_date\":{\"S\":\"2023-10-12\"},\"title\":{\"S\":\"Trolls Band Together\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"7.2\"},\"vote_count\":{\"N\":\"436\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/4XM8DUTQb3lhLemJC51Jx4a2EuA.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"28\"},{\"N\":\"80\"},{\"N\":\"53\"}]},\"id\":{\"N\":\"385687\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Fast X\"},\"overview\":{\"S\":\"Over many missions and against impossible odds, Dom Toretto and his family have outsmarted, out-nerved and outdriven every foe in their path. Now, they confront the most lethal opponent they've ever faced: A terrifying threat emerging from the shadows of the past who's fueled by blood revenge, and who is determined to shatter this family and destroy everything—and everyone—that Dom loves, forever.\"},\"popularity\":{\"N\":\"537.344\"},\"poster_path\":{\"S\":\"/fiVW06jE7z9YnO4trhaMEdclSiC.jpg\"},\"release_date\":{\"S\":\"2023-05-17\"},\"title\":{\"S\":\"Fast X\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"7.2\"},\"vote_count\":{\"N\":\"4566\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/hRPKfuotMeyRiXXGPKmmrVXD5DG.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"28\"}]},\"id\":{\"N\":\"504148\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"The Serpent\"},\"overview\":{\"S\":\"Top special agent Lucinda Kavsky works for a secret part of the CIA. She's given a special assignment but then set up by her own agency.\"},\"popularity\":{\"N\":\"530.362\"},\"poster_path\":{\"S\":\"/AvMoan3rxCDZpNf59BmAP2G8q5x.jpg\"},\"release_date\":{\"S\":\"2021-01-28\"},\"title\":{\"S\":\"The Serpent\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"3.8\"},\"vote_count\":{\"N\":\"12\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/kjQBrc00fB2RjHZB3PGR4w9ibpz.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"28\"},{\"N\":\"12\"},{\"N\":\"878\"}]},\"id\":{\"N\":\"670292\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"The Creator\"},\"overview\":{\"S\":\"Amid a future war between the human race and the forces of artificial intelligence, a hardened ex-special forces agent grieving the disappearance of his wife, is recruited to hunt down and kill the Creator, the elusive architect of advanced AI who has developed a mysterious weapon with the power to end the war—and mankind itself.\"},\"popularity\":{\"N\":\"519.619\"},\"poster_path\":{\"S\":\"/vBZ0qvaRxqEhZwl6LWmruJqWE8Z.jpg\"},\"release_date\":{\"S\":\"2023-09-27\"},\"title\":{\"S\":\"The Creator\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"7.2\"},\"vote_count\":{\"N\":\"1645\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/X8yF6STUk5Zr5nAuLBJiio8Sxh.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"18\"},{\"N\":\"10749\"}]},\"id\":{\"N\":\"1143183\"},\"original_language\":{\"S\":\"tl\"},\"original_title\":{\"S\":\"Rewind\"},\"overview\":{\"S\":\"Mary (Marian Rivera) loves John (Dingdong Dantes) for as long as she can remember. But after years of marriage, John's priorities shift, leading to a strained relationship with Mary, which causes a tragic accident that takes away Mary's life. Until one day, John gets an extraordinary proposition - to rewind time and save the life of the woman he loves.\"},\"popularity\":{\"N\":\"506.227\"},\"poster_path\":{\"S\":\"/vW80VheMJhHsj0pDVYJL3qAMWMd.jpg\"},\"release_date\":{\"S\":\"2023-12-25\"},\"title\":{\"S\":\"Rewind\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"0\"},\"vote_count\":{\"N\":\"0\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/4mmrgZW9bcgMRFdV1lCcXqCEXEr.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"28\"},{\"N\":\"18\"},{\"N\":\"12\"},{\"N\":\"9648\"},{\"N\":\"53\"}]},\"id\":{\"N\":\"755401\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Skydog\"},\"overview\":{\"S\":\"After a high school senior working on his pilot’s license rescues a dog named Oreo, he finds out his mom is a CIA agent who’s been captured. He teams up with Oreo and a new friend to find his mother and uncover double agents inside the CIA.\"},\"popularity\":{\"N\":\"504.779\"},\"poster_path\":{\"S\":\"/5M3bY1rl9QIQSmrAGPEt9qutj64.jpg\"},\"release_date\":{\"S\":\"2020-10-20\"},\"title\":{\"S\":\"Skydog\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"7.3\"},\"vote_count\":{\"N\":\"8\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/zIYROrkHJPYB3VTiW1L9QVgaQO.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"28\"},{\"N\":\"35\"}]},\"id\":{\"N\":\"897087\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Freelance\"},\"overview\":{\"S\":\"An ex-special forces operative takes a job to provide security for a journalist as she interviews a dictator, but a military coup breaks out in the middle of the interview, they are forced to escape into the jungle where they must survive.\"},\"popularity\":{\"N\":\"501.319\"},\"poster_path\":{\"S\":\"/7Bd4EUOqQDKZXA6Od5gkfzRNb0.jpg\"},\"release_date\":{\"S\":\"2023-10-05\"},\"title\":{\"S\":\"Freelance\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"6.5\"},\"vote_count\":{\"N\":\"390\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/t5zCBSB5xMDKcDqe91qahCOUYVV.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"27\"},{\"N\":\"9648\"}]},\"id\":{\"N\":\"507089\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Five Nights at Freddy's\"},\"overview\":{\"S\":\"Recently fired and desperate for work, a troubled young man named Mike agrees to take a position as a night security guard at an abandoned theme restaurant: Freddy Fazbear's Pizzeria. But he soon discovers that nothing at Freddy's is what it seems.\"},\"popularity\":{\"N\":\"496.682\"},\"poster_path\":{\"S\":\"/7BpNtNfxuocYEVREzVMO75hso1l.jpg\"},\"release_date\":{\"S\":\"2023-10-25\"},\"title\":{\"S\":\"Five Nights at Freddy's\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"7.8\"},\"vote_count\":{\"N\":\"2993\"}}}},{\"PutRequest\":{\"Item\":{\"adult\":{\"BOOL\":false},\"backdrop_path\":{\"S\":\"/9jPoyxjiEYPylUIMI3Ntixf8z3M.jpg\"},\"genre_ids\":{\"L\":[{\"N\":\"16\"},{\"N\":\"12\"},{\"N\":\"35\"},{\"N\":\"10751\"}]},\"id\":{\"N\":\"520758\"},\"original_language\":{\"S\":\"en\"},\"original_title\":{\"S\":\"Chicken Run: Dawn of the Nugget\"},\"overview\":{\"S\":\"A band of fearless chickens flock together to save poultry-kind from an unsettling new threat: a nearby farm that's cooking up something suspicious.\"},\"popularity\":{\"N\":\"494.214\"},\"poster_path\":{\"S\":\"/exNtEY8QUuQh9e23wSQjkPxKIU3.jpg\"},\"release_date\":{\"S\":\"2023-12-08\"},\"title\":{\"S\":\"Chicken Run: Dawn of the Nugget\"},\"video\":{\"BOOL\":false},\"vote_average\":{\"N\":\"7.4\"},\"vote_count\":{\"N\":\"325\"}}}}],\"",
+       {
+        "Ref": "MovieCastTableE4F7E4C8"
+       },
+       "\":[{\"PutRequest\":{\"Item\":{\"movieId\":{\"N\":\"1234\"},\"actorName\":{\"S\":\"Joe Bloggs\"},\"roleName\":{\"S\":\"Male Character 1\"},\"roleDescription\":{\"S\":\"description of character 1\"}}}},{\"PutRequest\":{\"Item\":{\"movieId\":{\"N\":\"1234\"},\"actorName\":{\"S\":\"Alice Broggs\"},\"roleName\":{\"S\":\"Female Character 1\"},\"roleDescription\":{\"S\":\"description of character 2\"}}}},{\"PutRequest\":{\"Item\":{\"movieId\":{\"N\":\"1234\"},\"actorName\":{\"S\":\"Joe Cloggs\"},\"roleName\":{\"S\":\"Male Character 2\"},\"roleDescription\":{\"S\":\"description of character 3\"}}}},{\"PutRequest\":{\"Item\":{\"movieId\":{\"N\":\"2345\"},\"actorName\":{\"S\":\"Joe Bloggs\"},\"roleName\":{\"S\":\"Male Character 1\"},\"roleDescription\":{\"S\":\"description of character 3\"}}}}]}},\"physicalResourceId\":{\"id\":\"moviesddbInitData\"}}"
       ]
      ]
     },
@@ -304,12 +882,20 @@
       {
        "Action": "dynamodb:BatchWriteItem",
        "Effect": "Allow",
-       "Resource": {
-        "Fn::GetAtt": [
-         "MoviesTable0F76A3E4",
-         "Arn"
-        ]
-       }
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "MovieCastTableE4F7E4C8",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "MoviesTable0F76A3E4",
+          "Arn"
+         ]
+        }
+       ]
       }
      ],
      "Version": "2012-10-17"
@@ -398,7 +984,7 @@
     "aws:cdk:path": "RestAPIStack/RestAPI/Resource"
    }
   },
-  "RestAPIDeploymentD35A538042eeb0271d4a1891588f7911c020e42a": {
+  "RestAPIDeploymentD35A53800f0bca70e7eaa1768e22f23a8d2b338e": {
    "Type": "AWS::ApiGateway::Deployment",
    "Properties": {
     "Description": "demo api",
@@ -410,8 +996,13 @@
     "RestAPImoviesmovieIdGET6B517F00",
     "RestAPImoviesmovieIdOPTIONSC1FB0512",
     "RestAPImoviesmovieId3DE0D522",
+    "RestAPImoviescastGET553E1102",
+    "RestAPImoviescastOPTIONS396E3DE5",
+    "RestAPImoviescastA509B28E",
+    "RestAPImoviesDeleteEB0F0328",
     "RestAPImoviesGET8F06310F",
     "RestAPImoviesOPTIONS1E02A856",
+    "RestAPImoviesPOSTC027C064",
     "RestAPImoviesA51CB040",
     "RestAPIOPTIONS3271A002"
    ],
@@ -423,7 +1014,7 @@
    "Type": "AWS::ApiGateway::Stage",
    "Properties": {
     "DeploymentId": {
-     "Ref": "RestAPIDeploymentD35A538042eeb0271d4a1891588f7911c020e42a"
+     "Ref": "RestAPIDeploymentD35A53800f0bca70e7eaa1768e22f23a8d2b338e"
     },
     "RestApiId": {
      "Ref": "RestAPI1CC12F26"
@@ -783,6 +1374,9 @@
     "HttpMethod": "GET",
     "Integration": {
      "IntegrationHttpMethod": "POST",
+     "RequestParameters": {
+      "integration.request.querystring.cast": "'true'"
+     },
      "Type": "AWS_PROXY",
      "Uri": {
       "Fn::Join": [
@@ -809,6 +1403,375 @@
    },
    "Metadata": {
     "aws:cdk:path": "RestAPIStack/RestAPI/Default/movies/{movieId}/GET/Resource"
+   }
+  },
+  "RestAPImoviesPOSTApiPermissionRestAPIStackRestAPIBD91D303POSTmovies8CD10A5C": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "AddMovieFnA0261A58",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:eu-west-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "RestAPI1CC12F26"
+       },
+       "/",
+       {
+        "Ref": "RestAPIDeploymentStagedev1DE74094"
+       },
+       "/POST/movies"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RestAPIStack/RestAPI/Default/movies/POST/ApiPermission.RestAPIStackRestAPIBD91D303.POST..movies"
+   }
+  },
+  "RestAPImoviesPOSTApiPermissionTestRestAPIStackRestAPIBD91D303POSTmovies2C903EBE": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "AddMovieFnA0261A58",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:eu-west-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "RestAPI1CC12F26"
+       },
+       "/test-invoke-stage/POST/movies"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RestAPIStack/RestAPI/Default/movies/POST/ApiPermission.Test.RestAPIStackRestAPIBD91D303.POST..movies"
+   }
+  },
+  "RestAPImoviesPOSTC027C064": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "AddMovieFnA0261A58",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "RestAPImoviesA51CB040"
+    },
+    "RestApiId": {
+     "Ref": "RestAPI1CC12F26"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RestAPIStack/RestAPI/Default/movies/POST/Resource"
+   }
+  },
+  "RestAPImoviesDeleteApiPermissionRestAPIStackRestAPIBD91D303DELETEmoviesF0C453C2": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "DeleteMovieFnCF59BB54",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:eu-west-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "RestAPI1CC12F26"
+       },
+       "/",
+       {
+        "Ref": "RestAPIDeploymentStagedev1DE74094"
+       },
+       "/DELETE/movies"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RestAPIStack/RestAPI/Default/movies/Delete/ApiPermission.RestAPIStackRestAPIBD91D303.DELETE..movies"
+   }
+  },
+  "RestAPImoviesDeleteApiPermissionTestRestAPIStackRestAPIBD91D303DELETEmovies33AD2BA3": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "DeleteMovieFnCF59BB54",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:eu-west-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "RestAPI1CC12F26"
+       },
+       "/test-invoke-stage/DELETE/movies"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RestAPIStack/RestAPI/Default/movies/Delete/ApiPermission.Test.RestAPIStackRestAPIBD91D303.DELETE..movies"
+   }
+  },
+  "RestAPImoviesDeleteEB0F0328": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "DELETE",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "DeleteMovieFnCF59BB54",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "RestAPImoviesA51CB040"
+    },
+    "RestApiId": {
+     "Ref": "RestAPI1CC12F26"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RestAPIStack/RestAPI/Default/movies/Delete/Resource"
+   }
+  },
+  "RestAPImoviescastA509B28E": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "RestAPImoviesA51CB040"
+    },
+    "PathPart": "cast",
+    "RestApiId": {
+     "Ref": "RestAPI1CC12F26"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RestAPIStack/RestAPI/Default/movies/cast/Resource"
+   }
+  },
+  "RestAPImoviescastOPTIONS396E3DE5": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,POST,PUT,PATCH,DELETE'",
+        "method.response.header.Access-Control-Allow-Credentials": "'true'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true,
+       "method.response.header.Access-Control-Allow-Credentials": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "RestAPImoviescastA509B28E"
+    },
+    "RestApiId": {
+     "Ref": "RestAPI1CC12F26"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RestAPIStack/RestAPI/Default/movies/cast/OPTIONS/Resource"
+   }
+  },
+  "RestAPImoviescastGETApiPermissionRestAPIStackRestAPIBD91D303GETmoviescast847390FD": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "GetCastMemberFn1BEFFC9C",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:eu-west-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "RestAPI1CC12F26"
+       },
+       "/",
+       {
+        "Ref": "RestAPIDeploymentStagedev1DE74094"
+       },
+       "/GET/movies/cast"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RestAPIStack/RestAPI/Default/movies/cast/GET/ApiPermission.RestAPIStackRestAPIBD91D303.GET..movies.cast"
+   }
+  },
+  "RestAPImoviescastGETApiPermissionTestRestAPIStackRestAPIBD91D303GETmoviescast7A2985A7": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "GetCastMemberFn1BEFFC9C",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:eu-west-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "RestAPI1CC12F26"
+       },
+       "/test-invoke-stage/GET/movies/cast"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RestAPIStack/RestAPI/Default/movies/cast/GET/ApiPermission.Test.RestAPIStackRestAPIBD91D303.GET..movies.cast"
+   }
+  },
+  "RestAPImoviescastGET553E1102": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "GetCastMemberFn1BEFFC9C",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "RestAPImoviescastA509B28E"
+    },
+    "RestApiId": {
+     "Ref": "RestAPI1CC12F26"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RestAPIStack/RestAPI/Default/movies/cast/GET/Resource"
    }
   },
   "CDKMetadata": {

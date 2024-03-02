@@ -46,7 +46,8 @@ export class RestAPIStack extends cdk.Stack {
         timeout: cdk.Duration.seconds(10),
         memorySize: 128,
         environment: {
-          TABLE_NAME: moviesTable.tableName,
+          TABLE_NAME_MOVIES: moviesTable.tableName, 
+          TABLE_NAME_MOVIE_CASTS: movieCastsTable.tableName, 
           REGION: 'eu-west-1',
         },
       }
@@ -80,7 +81,7 @@ export class RestAPIStack extends cdk.Stack {
       },
     });
 
-    const deleteMovieFn = new lambdanode.NodejsFunction(this, "AddMovieFn", {
+    const deleteMovieFn = new lambdanode.NodejsFunction(this, "DeleteMovieFn", {
       architecture: lambda.Architecture.ARM_64,
       runtime: lambda.Runtime.NODEJS_16_X,
       entry: `${__dirname}/../lambdas/deleteMovie.ts`,
@@ -108,6 +109,22 @@ export class RestAPIStack extends cdk.Stack {
       }
     );
 
+    const getMovieIncludeCastFn = new lambdanode.NodejsFunction(
+      this,
+      "GetMovieIncluedeCastFn",
+      {
+        architecture: lambda.Architecture.ARM_64,
+        runtime: lambda.Runtime.NODEJS_18_X,
+        entry: `${__dirname}/../lambdas/getMovieIncludeCast.ts`,
+        timeout: cdk.Duration.seconds(10),
+        memorySize: 128,
+        environment: {
+          TABLE_NAME: movieCastsTable.tableName,
+          REGION: 'eu-west-1',
+        },
+      }
+    );
+
     new custom.AwsCustomResource(this, "moviesddbInitData", {
       onCreate: {
         service: "DynamoDB",
@@ -130,7 +147,9 @@ export class RestAPIStack extends cdk.Stack {
     moviesTable.grantReadData(getAllMoviesFn)
     moviesTable.grantReadWriteData(newMovieFn)
     moviesTable.grantFullAccess(deleteMovieFn)
-    movieCastsTable.grantReadData(getMovieCastMembersFn);
+    movieCastsTable.grantReadData(getMovieCastMembersFn)
+    movieCastsTable.grantReadData(getMovieIncludeCastFn)
+    movieCastsTable.grantReadData(getMovieByIdFn)
 
 
     // REST API 
@@ -156,8 +175,14 @@ export class RestAPIStack extends cdk.Stack {
     const movieEndpoint = moviesEndpoint.addResource("{movieId}");
     movieEndpoint.addMethod(
       "GET",
-      new apig.LambdaIntegration(getMovieByIdFn, { proxy: true })
+      new apig.LambdaIntegration(getMovieByIdFn, {
+        proxy: true,
+        requestParameters: {
+          "integration.request.querystring.cast": "'true'"
+        }
+      })
     );
+
 
     moviesEndpoint.addMethod(
       "POST",
@@ -170,10 +195,12 @@ export class RestAPIStack extends cdk.Stack {
     )
 
     const movieCastEndpoint = moviesEndpoint.addResource("cast");
-movieCastEndpoint.addMethod(
-    "GET",
-    new apig.LambdaIntegration(getMovieCastMembersFn, { proxy: true })
-);
+    movieCastEndpoint.addMethod(
+      "GET",
+      new apig.LambdaIntegration(getMovieCastMembersFn, { proxy: true })
+    );
+
+
 
   }
 }
