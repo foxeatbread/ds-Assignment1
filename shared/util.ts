@@ -4,7 +4,7 @@ import { Movie, MovieCast, MovieReview } from "./types";
 type Entity = Movie | MovieCast | MovieReview;  // NEW
 export const generateItem = (entity: Entity) => {
   return {
-    PutRequest: {
+    PutRequest: { 
       Item: marshall(entity),
     },
   };
