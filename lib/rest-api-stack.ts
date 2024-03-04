@@ -42,6 +42,11 @@ export class RestAPIStack extends cdk.Stack {
       tableName: "MovieReview",
     });
 
+    movieReviewTable.addLocalSecondaryIndex({
+      indexName: "roleIx",
+      sortKey: { name: "reviewerName", type: dynamodb.AttributeType.STRING },
+    });
+
 
     // Functions 
     const getMovieByIdFn = new lambdanode.NodejsFunction(
@@ -141,6 +146,18 @@ export class RestAPIStack extends cdk.Stack {
       },
     });
 
+    const getReviewByReviewerNameFn = new lambdanode.NodejsFunction(this, "GetReviewByReviewerNameFn", {
+      architecture: lambda.Architecture.ARM_64,
+      runtime: lambda.Runtime.NODEJS_16_X,
+      entry: `${__dirname}/../lambdas/getReviewByReviewerName.ts`,
+      timeout: cdk.Duration.seconds(10),
+      memorySize: 128,
+      environment: {
+        TABLE_NAME: movieReviewTable.tableName,
+        REGION: "eu-west-1",
+      },
+    });
+
     new custom.AwsCustomResource(this, "moviesddbInitData", {
       onCreate: {
         service: "DynamoDB",
@@ -169,6 +186,7 @@ export class RestAPIStack extends cdk.Stack {
     movieCastsTable.grantReadData(getMovieByIdFn)
     movieReviewTable.grantReadWriteData(newReviewFn)
     movieReviewTable.grantReadData(getReviewByIdFn)
+    movieReviewTable.grantReadData(getReviewByReviewerNameFn)
 
 
     // REST API 
@@ -217,18 +235,24 @@ export class RestAPIStack extends cdk.Stack {
       new apig.LambdaIntegration(getMovieCastMembersFn, { proxy: true })
     );
 
-    const movieReviewEndpoint = moviesEndpoint.addResource("reviews");
-    movieReviewEndpoint.addMethod(
-      "POST",
-      new apig.LambdaIntegration(newReviewFn, { proxy: true })
-    )
-
     const movieReviewsEndpoint = movieEndpoint.addResource("reviews");
     movieReviewsEndpoint.addMethod(
       "GET",
       new apig.LambdaIntegration(getReviewByIdFn, { proxy: true })
     )
 
+    const movieReviewEndpoint = moviesEndpoint.addResource("reviews");
+    movieReviewEndpoint.addMethod(
+      "POST",
+      new apig.LambdaIntegration(newReviewFn, { proxy: true })
+    )
 
+    const movieReviewFilterEndpoint = movieReviewsEndpoint.addResource("{reviewerName}");
+    movieReviewFilterEndpoint.addMethod(
+      "GET",
+      new apig.LambdaIntegration(getReviewByReviewerNameFn, {
+        proxy: true,
+      })
+    )
   }
 }

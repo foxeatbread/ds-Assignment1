@@ -17,7 +17,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/2f4881c50f1d42148f009fd159ead8cbc9da0bb093ccf3362331f09fcca8ada9.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/b14036801089f0ebd66ac3288956e910f091cd8e3e6b98959f4daff51f00fdf7.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -201,6 +201,24 @@
             "data": "GetReviewByIdFn1432CD24"
           }
         ],
+        "/RestAPIStack/GetReviewByReviewerNameFn/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "GetReviewByReviewerNameFnServiceRoleFBBE80B1"
+          }
+        ],
+        "/RestAPIStack/GetReviewByReviewerNameFn/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "GetReviewByReviewerNameFnServiceRoleDefaultPolicy935B7D27"
+          }
+        ],
+        "/RestAPIStack/GetReviewByReviewerNameFn/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "GetReviewByReviewerNameFnC07EF8FA"
+          }
+        ],
         "/RestAPIStack/moviesddbInitData/Resource/Default": [
           {
             "type": "aws:cdk:logicalId",
@@ -234,7 +252,7 @@
         "/RestAPIStack/RestAPI/Deployment/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "RestAPIDeploymentD35A5380483a619771a4d278dc18ca411d12d519"
+            "data": "RestAPIDeploymentD35A53801d2937163ca4f0339e04060c6105cf19"
           }
         ],
         "/RestAPIStack/RestAPI/DeploymentStage.dev/Resource": [
@@ -379,6 +397,36 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "RestAPImoviesmovieIdreviewsGETE34AC9B8"
+          }
+        ],
+        "/RestAPIStack/RestAPI/Default/movies/{movieId}/reviews/{reviewerName}/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "RestAPImoviesmovieIdreviewsreviewerName061ABEC4"
+          }
+        ],
+        "/RestAPIStack/RestAPI/Default/movies/{movieId}/reviews/{reviewerName}/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "RestAPImoviesmovieIdreviewsreviewerNameOPTIONS2F0C0004"
+          }
+        ],
+        "/RestAPIStack/RestAPI/Default/movies/{movieId}/reviews/{reviewerName}/GET/ApiPermission.RestAPIStackRestAPIBD91D303.GET..movies.{movieId}.reviews.{reviewerName}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "RestAPImoviesmovieIdreviewsreviewerNameGETApiPermissionRestAPIStackRestAPIBD91D303GETmoviesmovieIdreviewsreviewerName479E9567"
+          }
+        ],
+        "/RestAPIStack/RestAPI/Default/movies/{movieId}/reviews/{reviewerName}/GET/ApiPermission.Test.RestAPIStackRestAPIBD91D303.GET..movies.{movieId}.reviews.{reviewerName}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "RestAPImoviesmovieIdreviewsreviewerNameGETApiPermissionTestRestAPIStackRestAPIBD91D303GETmoviesmovieIdreviewsreviewerName47BFC157"
+          }
+        ],
+        "/RestAPIStack/RestAPI/Default/movies/{movieId}/reviews/{reviewerName}/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "RestAPImoviesmovieIdreviewsreviewerNameGET6B912FEF"
           }
         ],
         "/RestAPIStack/RestAPI/Default/movies/cast/Resource": [
