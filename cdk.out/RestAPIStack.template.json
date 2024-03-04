@@ -969,7 +969,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
      },
-     "S3Key": "53f85d779c090f84364b2602a620f2b7cf3459a27f241a7a84bcd9b7befa5d57.zip"
+     "S3Key": "41bc83ae207b94fd2c30c7f5a824234559899d520f75802b9d849034c1d11b05.zip"
     },
     "Environment": {
      "Variables": {
@@ -997,7 +997,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "RestAPIStack/GetReviewByIdFn/Resource",
-    "aws:asset:path": "asset.53f85d779c090f84364b2602a620f2b7cf3459a27f241a7a84bcd9b7befa5d57",
+    "aws:asset:path": "asset.41bc83ae207b94fd2c30c7f5a824234559899d520f75802b9d849034c1d11b05",
     "aws:asset:is-bundled": true,
     "aws:asset:property": "Code"
    }
