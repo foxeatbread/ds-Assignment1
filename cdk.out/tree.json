@@ -1624,17 +1624,17 @@
               "version": "2.88.0"
             }
           },
-          "GetReviewByReviewerNameFn": {
-            "id": "GetReviewByReviewerNameFn",
-            "path": "RestAPIStack/GetReviewByReviewerNameFn",
+          "GetReviewByReviewerNameOrYearFn": {
+            "id": "GetReviewByReviewerNameOrYearFn",
+            "path": "RestAPIStack/GetReviewByReviewerNameOrYearFn",
             "children": {
               "ServiceRole": {
                 "id": "ServiceRole",
-                "path": "RestAPIStack/GetReviewByReviewerNameFn/ServiceRole",
+                "path": "RestAPIStack/GetReviewByReviewerNameOrYearFn/ServiceRole",
                 "children": {
                   "ImportServiceRole": {
                     "id": "ImportServiceRole",
-                    "path": "RestAPIStack/GetReviewByReviewerNameFn/ServiceRole/ImportServiceRole",
+                    "path": "RestAPIStack/GetReviewByReviewerNameOrYearFn/ServiceRole/ImportServiceRole",
                     "constructInfo": {
                       "fqn": "aws-cdk-lib.Resource",
                       "version": "2.88.0"
@@ -1642,7 +1642,7 @@
                   },
                   "Resource": {
                     "id": "Resource",
-                    "path": "RestAPIStack/GetReviewByReviewerNameFn/ServiceRole/Resource",
+                    "path": "RestAPIStack/GetReviewByReviewerNameOrYearFn/ServiceRole/Resource",
                     "attributes": {
                       "aws:cdk:cloudformation:type": "AWS::IAM::Role",
                       "aws:cdk:cloudformation:props": {
@@ -1681,11 +1681,11 @@
                   },
                   "DefaultPolicy": {
                     "id": "DefaultPolicy",
-                    "path": "RestAPIStack/GetReviewByReviewerNameFn/ServiceRole/DefaultPolicy",
+                    "path": "RestAPIStack/GetReviewByReviewerNameOrYearFn/ServiceRole/DefaultPolicy",
                     "children": {
                       "Resource": {
                         "id": "Resource",
-                        "path": "RestAPIStack/GetReviewByReviewerNameFn/ServiceRole/DefaultPolicy/Resource",
+                        "path": "RestAPIStack/GetReviewByReviewerNameOrYearFn/ServiceRole/DefaultPolicy/Resource",
                         "attributes": {
                           "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
                           "aws:cdk:cloudformation:props": {
@@ -1729,10 +1729,10 @@
                               ],
                               "Version": "2012-10-17"
                             },
-                            "policyName": "GetReviewByReviewerNameFnServiceRoleDefaultPolicy935B7D27",
+                            "policyName": "GetReviewByReviewerNameOrYearFnServiceRoleDefaultPolicyD2212DD6",
                             "roles": [
                               {
-                                "Ref": "GetReviewByReviewerNameFnServiceRoleFBBE80B1"
+                                "Ref": "GetReviewByReviewerNameOrYearFnServiceRoleF4EA1C63"
                               }
                             ]
                           }
@@ -1756,11 +1756,11 @@
               },
               "Code": {
                 "id": "Code",
-                "path": "RestAPIStack/GetReviewByReviewerNameFn/Code",
+                "path": "RestAPIStack/GetReviewByReviewerNameOrYearFn/Code",
                 "children": {
                   "Stage": {
                     "id": "Stage",
-                    "path": "RestAPIStack/GetReviewByReviewerNameFn/Code/Stage",
+                    "path": "RestAPIStack/GetReviewByReviewerNameOrYearFn/Code/Stage",
                     "constructInfo": {
                       "fqn": "aws-cdk-lib.AssetStaging",
                       "version": "2.88.0"
@@ -1768,7 +1768,7 @@
                   },
                   "AssetBucket": {
                     "id": "AssetBucket",
-                    "path": "RestAPIStack/GetReviewByReviewerNameFn/Code/AssetBucket",
+                    "path": "RestAPIStack/GetReviewByReviewerNameOrYearFn/Code/AssetBucket",
                     "constructInfo": {
                       "fqn": "aws-cdk-lib.aws_s3.BucketBase",
                       "version": "2.88.0"
@@ -1782,7 +1782,7 @@
               },
               "Resource": {
                 "id": "Resource",
-                "path": "RestAPIStack/GetReviewByReviewerNameFn/Resource",
+                "path": "RestAPIStack/GetReviewByReviewerNameOrYearFn/Resource",
                 "attributes": {
                   "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
                   "aws:cdk:cloudformation:props": {
@@ -1793,7 +1793,7 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
                       },
-                      "s3Key": "ec3e6e8ee41c6228fb3c12b2b5217517d32e85b29c5ee6eaa4d5073f319e3051.zip"
+                      "s3Key": "a0aac878cdf8d047acb7143eae48b4235f86f11aaea483475b3c8939357ce98b.zip"
                     },
                     "environment": {
                       "variables": {
@@ -1808,7 +1808,7 @@
                     "memorySize": 128,
                     "role": {
                       "Fn::GetAtt": [
-                        "GetReviewByReviewerNameFnServiceRoleFBBE80B1",
+                        "GetReviewByReviewerNameOrYearFnServiceRoleF4EA1C63",
                         "Arn"
                       ]
                     },
@@ -2099,7 +2099,7 @@
                       "aws:cdk:cloudformation:type": "AWS::ApiGateway::Stage",
                       "aws:cdk:cloudformation:props": {
                         "deploymentId": {
-                          "Ref": "RestAPIDeploymentD35A53801d2937163ca4f0339e04060c6105cf19"
+                          "Ref": "RestAPIDeploymentD35A5380cf9bda7b1e3c152b86136436c4d12391"
                         },
                         "restApiId": {
                           "Ref": "RestAPI1CC12F26"
@@ -3188,7 +3188,7 @@
                                             "action": "lambda:InvokeFunction",
                                             "functionName": {
                                               "Fn::GetAtt": [
-                                                "GetReviewByReviewerNameFnC07EF8FA",
+                                                "GetReviewByReviewerNameOrYearFnF94A1CED",
                                                 "Arn"
                                               ]
                                             },
@@ -3229,7 +3229,7 @@
                                             "action": "lambda:InvokeFunction",
                                             "functionName": {
                                               "Fn::GetAtt": [
-                                                "GetReviewByReviewerNameFnC07EF8FA",
+                                                "GetReviewByReviewerNameOrYearFnF94A1CED",
                                                 "Arn"
                                               ]
                                             },
@@ -3274,7 +3274,7 @@
                                                     "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/",
                                                     {
                                                       "Fn::GetAtt": [
-                                                        "GetReviewByReviewerNameFnC07EF8FA",
+                                                        "GetReviewByReviewerNameOrYearFnF94A1CED",
                                                         "Arn"
                                                       ]
                                                     },

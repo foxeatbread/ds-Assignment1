@@ -45,7 +45,9 @@ export const handler: APIGatewayProxyHandlerV2 = async (event, context) => {    
         
         // 如果 commandOutput.Items 不是 undefined，则执行过滤操作
         const reviews = commandOutput.Items;
-        const filteredReviews = reviews.filter(item => item.reviewerName.includes(reviewerName));
+        const filteredReviews = reviews.filter(item => 
+            item.reviewerName.includes(reviewerName) || item.reviewDate.includes(reviewerName)
+        );
 
 
 

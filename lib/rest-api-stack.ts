@@ -146,10 +146,10 @@ export class RestAPIStack extends cdk.Stack {
       },
     });
 
-    const getReviewByReviewerNameFn = new lambdanode.NodejsFunction(this, "GetReviewByReviewerNameFn", {
+    const getReviewByReviewerNameOrYearFn = new lambdanode.NodejsFunction(this, "GetReviewByReviewerNameOrYearFn", {
       architecture: lambda.Architecture.ARM_64,
       runtime: lambda.Runtime.NODEJS_16_X,
-      entry: `${__dirname}/../lambdas/getReviewByReviewerName.ts`,
+      entry: `${__dirname}/../lambdas/getReviewByReviewerNameOrYear.ts`,
       timeout: cdk.Duration.seconds(10),
       memorySize: 128,
       environment: {
@@ -186,7 +186,7 @@ export class RestAPIStack extends cdk.Stack {
     movieCastsTable.grantReadData(getMovieByIdFn)
     movieReviewTable.grantReadWriteData(newReviewFn)
     movieReviewTable.grantReadData(getReviewByIdFn)
-    movieReviewTable.grantReadData(getReviewByReviewerNameFn)
+    movieReviewTable.grantReadData(getReviewByReviewerNameOrYearFn)
 
 
     // REST API 
@@ -235,22 +235,22 @@ export class RestAPIStack extends cdk.Stack {
       new apig.LambdaIntegration(getMovieCastMembersFn, { proxy: true })
     );
 
-    const movieReviewsEndpoint = movieEndpoint.addResource("reviews");
-    movieReviewsEndpoint.addMethod(
+    const movieReview01Endpoint = movieEndpoint.addResource("reviews");
+    movieReview01Endpoint.addMethod(
       "GET",
       new apig.LambdaIntegration(getReviewByIdFn, { proxy: true })
     )
 
-    const movieReviewEndpoint = moviesEndpoint.addResource("reviews");
-    movieReviewEndpoint.addMethod(
+    const movieReview02Endpoint = moviesEndpoint.addResource("reviews");
+    movieReview02Endpoint.addMethod(
       "POST",
       new apig.LambdaIntegration(newReviewFn, { proxy: true })
     )
 
-    const movieReviewFilterEndpoint = movieReviewsEndpoint.addResource("{reviewerName}");
-    movieReviewFilterEndpoint.addMethod(
+    const movieReviewByReviewerNameEndpoint = movieReview01Endpoint.addResource("{reviewerName}");
+    movieReviewByReviewerNameEndpoint.addMethod(
       "GET",
-      new apig.LambdaIntegration(getReviewByReviewerNameFn, {
+      new apig.LambdaIntegration(getReviewByReviewerNameOrYearFn,{
         proxy: true,
       })
     )

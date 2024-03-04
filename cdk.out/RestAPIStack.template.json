@@ -1049,7 +1049,7 @@
     "aws:asset:property": "Code"
    }
   },
-  "GetReviewByReviewerNameFnServiceRoleFBBE80B1": {
+  "GetReviewByReviewerNameOrYearFnServiceRoleF4EA1C63": {
    "Type": "AWS::IAM::Role",
    "Properties": {
     "AssumeRolePolicyDocument": {
@@ -1080,10 +1080,10 @@
     ]
    },
    "Metadata": {
-    "aws:cdk:path": "RestAPIStack/GetReviewByReviewerNameFn/ServiceRole/Resource"
+    "aws:cdk:path": "RestAPIStack/GetReviewByReviewerNameOrYearFn/ServiceRole/Resource"
    }
   },
-  "GetReviewByReviewerNameFnServiceRoleDefaultPolicy935B7D27": {
+  "GetReviewByReviewerNameOrYearFnServiceRoleDefaultPolicyD2212DD6": {
    "Type": "AWS::IAM::Policy",
    "Properties": {
     "PolicyDocument": {
@@ -1126,18 +1126,18 @@
      ],
      "Version": "2012-10-17"
     },
-    "PolicyName": "GetReviewByReviewerNameFnServiceRoleDefaultPolicy935B7D27",
+    "PolicyName": "GetReviewByReviewerNameOrYearFnServiceRoleDefaultPolicyD2212DD6",
     "Roles": [
      {
-      "Ref": "GetReviewByReviewerNameFnServiceRoleFBBE80B1"
+      "Ref": "GetReviewByReviewerNameOrYearFnServiceRoleF4EA1C63"
      }
     ]
    },
    "Metadata": {
-    "aws:cdk:path": "RestAPIStack/GetReviewByReviewerNameFn/ServiceRole/DefaultPolicy/Resource"
+    "aws:cdk:path": "RestAPIStack/GetReviewByReviewerNameOrYearFn/ServiceRole/DefaultPolicy/Resource"
    }
   },
-  "GetReviewByReviewerNameFnC07EF8FA": {
+  "GetReviewByReviewerNameOrYearFnF94A1CED": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Architectures": [
@@ -1147,7 +1147,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
      },
-     "S3Key": "ec3e6e8ee41c6228fb3c12b2b5217517d32e85b29c5ee6eaa4d5073f319e3051.zip"
+     "S3Key": "a0aac878cdf8d047acb7143eae48b4235f86f11aaea483475b3c8939357ce98b.zip"
     },
     "Environment": {
      "Variables": {
@@ -1162,7 +1162,7 @@
     "MemorySize": 128,
     "Role": {
      "Fn::GetAtt": [
-      "GetReviewByReviewerNameFnServiceRoleFBBE80B1",
+      "GetReviewByReviewerNameOrYearFnServiceRoleF4EA1C63",
       "Arn"
      ]
     },
@@ -1170,12 +1170,12 @@
     "Timeout": 10
    },
    "DependsOn": [
-    "GetReviewByReviewerNameFnServiceRoleDefaultPolicy935B7D27",
-    "GetReviewByReviewerNameFnServiceRoleFBBE80B1"
+    "GetReviewByReviewerNameOrYearFnServiceRoleDefaultPolicyD2212DD6",
+    "GetReviewByReviewerNameOrYearFnServiceRoleF4EA1C63"
    ],
    "Metadata": {
-    "aws:cdk:path": "RestAPIStack/GetReviewByReviewerNameFn/Resource",
-    "aws:asset:path": "asset.ec3e6e8ee41c6228fb3c12b2b5217517d32e85b29c5ee6eaa4d5073f319e3051",
+    "aws:cdk:path": "RestAPIStack/GetReviewByReviewerNameOrYearFn/Resource",
+    "aws:asset:path": "asset.a0aac878cdf8d047acb7143eae48b4235f86f11aaea483475b3c8939357ce98b",
     "aws:asset:is-bundled": true,
     "aws:asset:property": "Code"
    }
@@ -1336,7 +1336,7 @@
     "aws:cdk:path": "RestAPIStack/RestAPI/Resource"
    }
   },
-  "RestAPIDeploymentD35A53801d2937163ca4f0339e04060c6105cf19": {
+  "RestAPIDeploymentD35A5380cf9bda7b1e3c152b86136436c4d12391": {
    "Type": "AWS::ApiGateway::Deployment",
    "Properties": {
     "Description": "demo api",
@@ -1375,7 +1375,7 @@
    "Type": "AWS::ApiGateway::Stage",
    "Properties": {
     "DeploymentId": {
-     "Ref": "RestAPIDeploymentD35A53801d2937163ca4f0339e04060c6105cf19"
+     "Ref": "RestAPIDeploymentD35A5380cf9bda7b1e3c152b86136436c4d12391"
     },
     "RestApiId": {
      "Ref": "RestAPI1CC12F26"
@@ -2201,7 +2201,7 @@
     "Action": "lambda:InvokeFunction",
     "FunctionName": {
      "Fn::GetAtt": [
-      "GetReviewByReviewerNameFnC07EF8FA",
+      "GetReviewByReviewerNameOrYearFnF94A1CED",
       "Arn"
      ]
     },
@@ -2237,7 +2237,7 @@
     "Action": "lambda:InvokeFunction",
     "FunctionName": {
      "Fn::GetAtt": [
-      "GetReviewByReviewerNameFnC07EF8FA",
+      "GetReviewByReviewerNameOrYearFnF94A1CED",
       "Arn"
      ]
     },
@@ -2278,7 +2278,7 @@
         "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/",
         {
          "Fn::GetAtt": [
-          "GetReviewByReviewerNameFnC07EF8FA",
+          "GetReviewByReviewerNameOrYearFnF94A1CED",
           "Arn"
          ]
         },
