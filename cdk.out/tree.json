@@ -4218,7 +4218,7 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "4f3c3cae13faa369920635370390a4ec92f14d1fc09de85b6ed5fb8ae6220b2f.zip"
+                      "s3Key": "2e6dede3f5d0e085da8e9eb7e15e4d2f1eaaba26e6e54ecc95ff4da1620e71d1.zip"
                     },
                     "environment": {
                       "variables": {
@@ -4598,7 +4598,12 @@
                 "attributes": {
                   "aws:cdk:cloudformation:type": "AWS::ApiGateway::RestApi",
                   "aws:cdk:cloudformation:props": {
-                    "description": "demo api",
+                    "description": "App RestApi",
+                    "endpointConfiguration": {
+                      "types": [
+                        "REGIONAL"
+                      ]
+                    },
                     "name": "RestAPI"
                   }
                 },
@@ -4617,7 +4622,7 @@
                     "attributes": {
                       "aws:cdk:cloudformation:type": "AWS::ApiGateway::Deployment",
                       "aws:cdk:cloudformation:props": {
-                        "description": "demo api",
+                        "description": "App RestApi",
                         "restApiId": {
                           "Ref": "RestAPI1CC12F26"
                         }
@@ -4645,7 +4650,7 @@
                       "aws:cdk:cloudformation:type": "AWS::ApiGateway::Stage",
                       "aws:cdk:cloudformation:props": {
                         "deploymentId": {
-                          "Ref": "RestAPIDeploymentD35A5380cb9e8a48001bb8661368c2cf50860ed1"
+                          "Ref": "RestAPIDeploymentD35A53804b500c3d4bc657442bc1b282bcf48cef"
                         },
                         "restApiId": {
                           "Ref": "RestAPI1CC12F26"

@@ -13,15 +13,16 @@ import { UserPool } from "aws-cdk-lib/aws-cognito";
 import { AuthApi } from './auth-api'
 
 
-type AppApiProps = {
+type AppApiProps = cdk.StackProps & {
   userPoolId: string;
   userPoolClientId: string;
 };
 const app = new cdk.App();
 
 export class RestAPIStack extends cdk.Stack {
-  constructor(scope: Construct, id: string,  props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string,  props?: AppApiProps) {
     super(scope, id);
+    
 
     const userPool = new UserPool(this, "UserPool", {
       signInAliases: { username: true, email: true },
@@ -259,7 +260,8 @@ export class RestAPIStack extends cdk.Stack {
 
     // REST API 
     const api = new apig.RestApi(this, "RestAPI", {
-      description: "demo api",
+      description: "App RestApi",
+      endpointTypes: [apig.EndpointType.REGIONAL],
       deployOptions: {
         stageName: "dev",
       },

@@ -2790,7 +2790,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "4f3c3cae13faa369920635370390a4ec92f14d1fc09de85b6ed5fb8ae6220b2f.zip"
+     "S3Key": "2e6dede3f5d0e085da8e9eb7e15e4d2f1eaaba26e6e54ecc95ff4da1620e71d1.zip"
     },
     "Environment": {
      "Variables": {
@@ -2811,7 +2811,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "RestAPIStack/AuthorizerFn/Resource",
-    "aws:asset:path": "asset.4f3c3cae13faa369920635370390a4ec92f14d1fc09de85b6ed5fb8ae6220b2f",
+    "aws:asset:path": "asset.2e6dede3f5d0e085da8e9eb7e15e4d2f1eaaba26e6e54ecc95ff4da1620e71d1",
     "aws:asset:is-bundled": true,
     "aws:asset:property": "Code"
    }
@@ -3072,17 +3072,22 @@
   "RestAPI1CC12F26": {
    "Type": "AWS::ApiGateway::RestApi",
    "Properties": {
-    "Description": "demo api",
+    "Description": "App RestApi",
+    "EndpointConfiguration": {
+     "Types": [
+      "REGIONAL"
+     ]
+    },
     "Name": "RestAPI"
    },
    "Metadata": {
     "aws:cdk:path": "RestAPIStack/RestAPI/Resource"
    }
   },
-  "RestAPIDeploymentD35A5380cb9e8a48001bb8661368c2cf50860ed1": {
+  "RestAPIDeploymentD35A53804b500c3d4bc657442bc1b282bcf48cef": {
    "Type": "AWS::ApiGateway::Deployment",
    "Properties": {
-    "Description": "demo api",
+    "Description": "App RestApi",
     "RestApiId": {
      "Ref": "RestAPI1CC12F26"
     }
@@ -3123,7 +3128,7 @@
    "Type": "AWS::ApiGateway::Stage",
    "Properties": {
     "DeploymentId": {
-     "Ref": "RestAPIDeploymentD35A5380cb9e8a48001bb8661368c2cf50860ed1"
+     "Ref": "RestAPIDeploymentD35A53804b500c3d4bc657442bc1b282bcf48cef"
     },
     "RestApiId": {
      "Ref": "RestAPI1CC12F26"
