@@ -31,10 +31,17 @@ export const handler: APIGatewayProxyHandlerV2 = async (event, context) => {
           },
           body: JSON.stringify({
             message: `Incorrect type. Must match Movie schema`,
-            schema: schema.definitions["Movie"],
+            schema: schema.definitions["MovieReview"],
           }),
         };
       }
+
+      const commandOutput = await ddbDocClient.send(
+        new PutCommand({
+          TableName: process.env.TABLE_NAME,
+          Item: body,
+        })
+      );
 
     return {
       statusCode: 201,

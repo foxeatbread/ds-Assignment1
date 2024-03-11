@@ -11,20 +11,20 @@
     },
     "RestAPIStack": {
       "type": "aws:cloudformation:stack",
-      "environment": "aws://unknown-account/eu-west-1",
+      "environment": "aws://unknown-account/unknown-region",
       "properties": {
         "templateFile": "RestAPIStack.template.json",
         "validateOnSynth": false,
-        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-eu-west-1",
-        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-eu-west-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1/b207b94100b2fd1a7080bce8e03c7c6cb3f0274c80bd74a8744c9de4b72eac6f.json",
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/2d37593a81ebc13d4c9fa6f2078633ab8e6d8364054170dbd9f5b9adafdbdd8b.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
           "RestAPIStack.assets"
         ],
         "lookupRole": {
-          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-eu-west-1",
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}",
           "requiresBootstrapStackVersion": 8,
           "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
         }
@@ -33,6 +33,228 @@
         "RestAPIStack.assets"
       ],
       "metadata": {
+        "/RestAPIStack/UserPool/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UserPool6BA7E5F2"
+          }
+        ],
+        "/RestAPIStack/UserPool/AppClient/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UserPoolAppClientDD0407EC"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApi6F145F59"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Deployment/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiDeploymentE6C7B14Bc744378c62f289f56a622839675fe936"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/DeploymentStage.prod/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiDeploymentStageprodEA127565"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Endpoint": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiEndpointBBC1D636"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Default/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiOPTIONSF87E2E8C"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiauth4F918273"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiauthOPTIONSB7D5DB23"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiauthsignup2FA1E77F"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signup/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiauthsignupOPTIONSB3E2B959"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signup/POST/ApiPermission.RestAPIStackAuthServiceApi0F27BA19.POST..auth.signup": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiauthsignupPOSTApiPermissionRestAPIStackAuthServiceApi0F27BA19POSTauthsignupBDE8AC82"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signup/POST/ApiPermission.Test.RestAPIStackAuthServiceApi0F27BA19.POST..auth.signup": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiauthsignupPOSTApiPermissionTestRestAPIStackAuthServiceApi0F27BA19POSTauthsignup505B8A14"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signup/POST/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiauthsignupPOST07EFAAC5"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/confirm_signup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiauthconfirmsignup53051378"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/confirm_signup/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiauthconfirmsignupOPTIONSF4E3A721"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/confirm_signup/POST/ApiPermission.RestAPIStackAuthServiceApi0F27BA19.POST..auth.confirm_signup": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiauthconfirmsignupPOSTApiPermissionRestAPIStackAuthServiceApi0F27BA19POSTauthconfirmsignupE180C3DD"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/confirm_signup/POST/ApiPermission.Test.RestAPIStackAuthServiceApi0F27BA19.POST..auth.confirm_signup": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiauthconfirmsignupPOSTApiPermissionTestRestAPIStackAuthServiceApi0F27BA19POSTauthconfirmsignup0A2B0B8D"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/confirm_signup/POST/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiauthconfirmsignupPOSTBF26C81A"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signout/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiauthsignout9DEA4640"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signout/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiauthsignoutOPTIONSCB5E990F"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signout/GET/ApiPermission.RestAPIStackAuthServiceApi0F27BA19.GET..auth.signout": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiauthsignoutGETApiPermissionRestAPIStackAuthServiceApi0F27BA19GETauthsignout396009BE"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signout/GET/ApiPermission.Test.RestAPIStackAuthServiceApi0F27BA19.GET..auth.signout": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiauthsignoutGETApiPermissionTestRestAPIStackAuthServiceApi0F27BA19GETauthsignout089FEE87"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signout/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiauthsignoutGETC75DA49A"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signin/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiauthsigninAC698811"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signin/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiauthsigninOPTIONS4CCAC799"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signin/POST/ApiPermission.RestAPIStackAuthServiceApi0F27BA19.POST..auth.signin": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiauthsigninPOSTApiPermissionRestAPIStackAuthServiceApi0F27BA19POSTauthsignin413C1017"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signin/POST/ApiPermission.Test.RestAPIStackAuthServiceApi0F27BA19.POST..auth.signin": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiauthsigninPOSTApiPermissionTestRestAPIStackAuthServiceApi0F27BA19POSTauthsigninE30A154A"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signin/POST/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiauthsigninPOSTC78F9AEC"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/SignupFn/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiSignupFnServiceRole449F516A"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/SignupFn/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiSignupFn42E54DA2"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/ConfirmFn/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiConfirmFnServiceRole2967189E"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/ConfirmFn/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiConfirmFn0A585E3D"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/SignoutFn/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiSignoutFnServiceRole47081A24"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/SignoutFn/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiSignoutFn0B9011EB"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/SigninFn/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiSigninFnServiceRole63D70D3D"
+          }
+        ],
+        "/RestAPIStack/AuthServiceApi/SigninFn/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceApiSigninFnD683380D"
+          }
+        ],
         "/RestAPIStack/MoviesTable": [
           {
             "type": "aws:cdk:hasPhysicalName",
@@ -255,6 +477,30 @@
             "data": "ModifyReviewByReviewerNameFn98576E52"
           }
         ],
+        "/RestAPIStack/AuthorizerFn/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthorizerFnServiceRole91AE9242"
+          }
+        ],
+        "/RestAPIStack/AuthorizerFn/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthorizerFn97B9AA7C"
+          }
+        ],
+        "/RestAPIStack/AuthorizerFn/RestAPIStackRequestAuthorizer12A96582:Permissions": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthorizerFnRestAPIStackRequestAuthorizer12A96582Permissions1F72ACCC"
+          }
+        ],
+        "/RestAPIStack/RequestAuthorizer/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "RequestAuthorizer7473A0B3"
+          }
+        ],
         "/RestAPIStack/moviesddbInitData/Resource/Default": [
           {
             "type": "aws:cdk:logicalId",
@@ -288,7 +534,7 @@
         "/RestAPIStack/RestAPI/Deployment/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "RestAPIDeploymentD35A53806331d246ad9a031a67aa6b078eff1c5b"
+            "data": "RestAPIDeploymentD35A5380cb9e8a48001bb8661368c2cf50860ed1"
           }
         ],
         "/RestAPIStack/RestAPI/DeploymentStage.dev/Resource": [
@@ -577,6 +823,12 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "CDKMetadata"
+          }
+        ],
+        "/RestAPIStack/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
           }
         ],
         "/RestAPIStack/BootstrapVersion": [

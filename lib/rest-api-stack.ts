@@ -1,3 +1,4 @@
+import * as node from "aws-cdk-lib/aws-lambda-nodejs";
 import * as cdk from "aws-cdk-lib";
 import * as lambdanode from "aws-cdk-lib/aws-lambda-nodejs";
 import * as lambda from "aws-cdk-lib/aws-lambda";
@@ -8,10 +9,38 @@ import { Construct } from "constructs";
 import { generateBatch } from "../shared/util";
 import { movies, movieCasts,movieReview } from "../seed/movies";
 import * as apig from "aws-cdk-lib/aws-apigateway";
+import { UserPool } from "aws-cdk-lib/aws-cognito";
+import { AuthApi } from './auth-api'
+
+
+type AppApiProps = {
+  userPoolId: string;
+  userPoolClientId: string;
+};
+const app = new cdk.App();
 
 export class RestAPIStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
-    super(scope, id, props);
+  constructor(scope: Construct, id: string,  props?: cdk.StackProps) {
+    super(scope, id);
+
+    const userPool = new UserPool(this, "UserPool", {
+      signInAliases: { username: true, email: true },
+      selfSignUpEnabled: true,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
+    const userPoolId = userPool.userPoolId;
+
+    const appClient = userPool.addClient("AppClient", {
+      authFlows: { userPassword: true },
+    });
+
+    const userPoolClientId = appClient.userPoolClientId;
+
+    new AuthApi(this, 'AuthServiceApi', {
+      userPoolId: userPoolId,
+      userPoolClientId: userPoolClientId,
+    });
 
     // Tables 
     const moviesTable = new dynamodb.Table(this, "MoviesTable", {
@@ -181,6 +210,19 @@ export class RestAPIStack extends cdk.Stack {
         REGION: "eu-west-1",
       },
     });
+    const authorizerFn = new node.NodejsFunction(this, "AuthorizerFn", {
+      entry: "./lambdas/auth/authorizer.ts",
+    });
+
+    const requestAuthorizer = new apig.RequestAuthorizer(
+      this,
+      "RequestAuthorizer",
+      {
+        identitySources: [apig.IdentitySource.header("cookie")],
+        handler: authorizerFn,
+        resultsCacheTtl: cdk.Duration.minutes(0),
+      }
+    );
 
     new custom.AwsCustomResource(this, "moviesddbInitData", {
       onCreate: {
@@ -228,19 +270,23 @@ export class RestAPIStack extends cdk.Stack {
         allowOrigins: ["*"],
       },
     });
+    
 
     const moviesEndpoint = api.root.addResource("movies");
     moviesEndpoint.addMethod(
       "GET",
       new apig.LambdaIntegration(getAllMoviesFn, { proxy: true })
     );
-    moviesEndpoint.addMethod(
-      "POST",
-      new apig.LambdaIntegration(newMovieFn, { proxy: true })
-    );
+    moviesEndpoint.addMethod("POST", new apig.LambdaIntegration(newReviewFn, { proxy: true }), {
+      authorizer: requestAuthorizer,
+      authorizationType: apig.AuthorizationType.CUSTOM,
+    });
     moviesEndpoint.addMethod(
       "Delete",
-      new apig.LambdaIntegration(deleteMovieFn, { proxy: true })
+      new apig.LambdaIntegration(deleteMovieFn, { proxy: true }),{
+        authorizer: requestAuthorizer,
+        authorizationType: apig.AuthorizationType.CUSTOM,
+      }
     )
 
 
@@ -270,7 +316,10 @@ export class RestAPIStack extends cdk.Stack {
     const movieReview02Endpoint = moviesEndpoint.addResource("reviews");
     movieReview02Endpoint.addMethod(
       "POST",
-      new apig.LambdaIntegration(newReviewFn, { proxy: true })
+      new apig.LambdaIntegration(newReviewFn, { proxy: true }), {
+        authorizer: requestAuthorizer,
+        authorizationType: apig.AuthorizationType.CUSTOM,
+      }
     )
 
     const movieReviewByReviewerNameEndpoint = movieReview01Endpoint.addResource("{reviewerName}");
@@ -284,7 +333,10 @@ export class RestAPIStack extends cdk.Stack {
       "PUT",
       new apig.LambdaIntegration(modifyReviewByReviewerNameFn,{
         proxy: true,
-      })
+      }), {
+        authorizer: requestAuthorizer,
+        authorizationType: apig.AuthorizationType.CUSTOM,
+      }
     )
 
     const reviewsByReviewerNameEndpoint = movieReview02Endpoint.addResource("{reviewerName}");
@@ -295,4 +347,5 @@ export class RestAPIStack extends cdk.Stack {
       })
     )
   }
+  
 }

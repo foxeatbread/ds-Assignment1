@@ -8,6 +8,1890 @@
         "id": "RestAPIStack",
         "path": "RestAPIStack",
         "children": {
+          "UserPool": {
+            "id": "UserPool",
+            "path": "RestAPIStack/UserPool",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "RestAPIStack/UserPool/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Cognito::UserPool",
+                  "aws:cdk:cloudformation:props": {
+                    "accountRecoverySetting": {
+                      "recoveryMechanisms": [
+                        {
+                          "name": "verified_phone_number",
+                          "priority": 1
+                        },
+                        {
+                          "name": "verified_email",
+                          "priority": 2
+                        }
+                      ]
+                    },
+                    "adminCreateUserConfig": {
+                      "allowAdminCreateUserOnly": false
+                    },
+                    "aliasAttributes": [
+                      "email"
+                    ],
+                    "autoVerifiedAttributes": [
+                      "email"
+                    ],
+                    "emailVerificationMessage": "The verification code to your new account is {####}",
+                    "emailVerificationSubject": "Verify your new account",
+                    "smsVerificationMessage": "The verification code to your new account is {####}",
+                    "verificationMessageTemplate": {
+                      "defaultEmailOption": "CONFIRM_WITH_CODE",
+                      "emailMessage": "The verification code to your new account is {####}",
+                      "emailSubject": "Verify your new account",
+                      "smsMessage": "The verification code to your new account is {####}"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cognito.CfnUserPool",
+                  "version": "2.88.0"
+                }
+              },
+              "AppClient": {
+                "id": "AppClient",
+                "path": "RestAPIStack/UserPool/AppClient",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "RestAPIStack/UserPool/AppClient/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Cognito::UserPoolClient",
+                      "aws:cdk:cloudformation:props": {
+                        "allowedOAuthFlows": [
+                          "implicit",
+                          "code"
+                        ],
+                        "allowedOAuthFlowsUserPoolClient": true,
+                        "allowedOAuthScopes": [
+                          "profile",
+                          "phone",
+                          "email",
+                          "openid",
+                          "aws.cognito.signin.user.admin"
+                        ],
+                        "callbackUrLs": [
+                          "https://example.com"
+                        ],
+                        "explicitAuthFlows": [
+                          "ALLOW_USER_PASSWORD_AUTH",
+                          "ALLOW_REFRESH_TOKEN_AUTH"
+                        ],
+                        "supportedIdentityProviders": [
+                          "COGNITO"
+                        ],
+                        "userPoolId": {
+                          "Ref": "UserPool6BA7E5F2"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_cognito.CfnUserPoolClient",
+                      "version": "2.88.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cognito.UserPoolClient",
+                  "version": "2.88.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_cognito.UserPool",
+              "version": "2.88.0"
+            }
+          },
+          "AuthServiceApi": {
+            "id": "AuthServiceApi",
+            "path": "RestAPIStack/AuthServiceApi",
+            "children": {
+              "AuthServiceApi": {
+                "id": "AuthServiceApi",
+                "path": "RestAPIStack/AuthServiceApi/AuthServiceApi",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ApiGateway::RestApi",
+                      "aws:cdk:cloudformation:props": {
+                        "description": "Authentication Service RestApi",
+                        "endpointConfiguration": {
+                          "types": [
+                            "REGIONAL"
+                          ]
+                        },
+                        "name": "AuthServiceApi"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.CfnRestApi",
+                      "version": "2.88.0"
+                    }
+                  },
+                  "Deployment": {
+                    "id": "Deployment",
+                    "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Deployment",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Deployment/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ApiGateway::Deployment",
+                          "aws:cdk:cloudformation:props": {
+                            "description": "Authentication Service RestApi",
+                            "restApiId": {
+                              "Ref": "AuthServiceApi6F145F59"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.CfnDeployment",
+                          "version": "2.88.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.Deployment",
+                      "version": "2.88.0"
+                    }
+                  },
+                  "DeploymentStage.prod": {
+                    "id": "DeploymentStage.prod",
+                    "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/DeploymentStage.prod",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/DeploymentStage.prod/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ApiGateway::Stage",
+                          "aws:cdk:cloudformation:props": {
+                            "deploymentId": {
+                              "Ref": "AuthServiceApiDeploymentE6C7B14Bc744378c62f289f56a622839675fe936"
+                            },
+                            "restApiId": {
+                              "Ref": "AuthServiceApi6F145F59"
+                            },
+                            "stageName": "prod"
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.CfnStage",
+                          "version": "2.88.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.Stage",
+                      "version": "2.88.0"
+                    }
+                  },
+                  "Endpoint": {
+                    "id": "Endpoint",
+                    "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Endpoint",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnOutput",
+                      "version": "2.88.0"
+                    }
+                  },
+                  "Default": {
+                    "id": "Default",
+                    "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default",
+                    "children": {
+                      "OPTIONS": {
+                        "id": "OPTIONS",
+                        "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/OPTIONS",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/OPTIONS/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                              "aws:cdk:cloudformation:props": {
+                                "apiKeyRequired": false,
+                                "authorizationType": "NONE",
+                                "httpMethod": "OPTIONS",
+                                "integration": {
+                                  "type": "MOCK",
+                                  "requestTemplates": {
+                                    "application/json": "{ statusCode: 200 }"
+                                  },
+                                  "integrationResponses": [
+                                    {
+                                      "statusCode": "204",
+                                      "responseParameters": {
+                                        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                                        "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+                                      }
+                                    }
+                                  ]
+                                },
+                                "methodResponses": [
+                                  {
+                                    "statusCode": "204",
+                                    "responseParameters": {
+                                      "method.response.header.Access-Control-Allow-Headers": true,
+                                      "method.response.header.Access-Control-Allow-Origin": true,
+                                      "method.response.header.Access-Control-Allow-Methods": true
+                                    }
+                                  }
+                                ],
+                                "resourceId": {
+                                  "Fn::GetAtt": [
+                                    "AuthServiceApi6F145F59",
+                                    "RootResourceId"
+                                  ]
+                                },
+                                "restApiId": {
+                                  "Ref": "AuthServiceApi6F145F59"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                              "version": "2.88.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                          "version": "2.88.0"
+                        }
+                      },
+                      "auth": {
+                        "id": "auth",
+                        "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::ApiGateway::Resource",
+                              "aws:cdk:cloudformation:props": {
+                                "parentId": {
+                                  "Fn::GetAtt": [
+                                    "AuthServiceApi6F145F59",
+                                    "RootResourceId"
+                                  ]
+                                },
+                                "pathPart": "auth",
+                                "restApiId": {
+                                  "Ref": "AuthServiceApi6F145F59"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.CfnResource",
+                              "version": "2.88.0"
+                            }
+                          },
+                          "OPTIONS": {
+                            "id": "OPTIONS",
+                            "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/OPTIONS",
+                            "children": {
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/OPTIONS/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                  "aws:cdk:cloudformation:props": {
+                                    "apiKeyRequired": false,
+                                    "authorizationType": "NONE",
+                                    "httpMethod": "OPTIONS",
+                                    "integration": {
+                                      "type": "MOCK",
+                                      "requestTemplates": {
+                                        "application/json": "{ statusCode: 200 }"
+                                      },
+                                      "integrationResponses": [
+                                        {
+                                          "statusCode": "204",
+                                          "responseParameters": {
+                                            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                                            "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                            "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+                                          }
+                                        }
+                                      ]
+                                    },
+                                    "methodResponses": [
+                                      {
+                                        "statusCode": "204",
+                                        "responseParameters": {
+                                          "method.response.header.Access-Control-Allow-Headers": true,
+                                          "method.response.header.Access-Control-Allow-Origin": true,
+                                          "method.response.header.Access-Control-Allow-Methods": true
+                                        }
+                                      }
+                                    ],
+                                    "resourceId": {
+                                      "Ref": "AuthServiceApiauth4F918273"
+                                    },
+                                    "restApiId": {
+                                      "Ref": "AuthServiceApi6F145F59"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                  "version": "2.88.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                              "version": "2.88.0"
+                            }
+                          },
+                          "signup": {
+                            "id": "signup",
+                            "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signup",
+                            "children": {
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signup/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Resource",
+                                  "aws:cdk:cloudformation:props": {
+                                    "parentId": {
+                                      "Ref": "AuthServiceApiauth4F918273"
+                                    },
+                                    "pathPart": "signup",
+                                    "restApiId": {
+                                      "Ref": "AuthServiceApi6F145F59"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.CfnResource",
+                                  "version": "2.88.0"
+                                }
+                              },
+                              "OPTIONS": {
+                                "id": "OPTIONS",
+                                "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signup/OPTIONS",
+                                "children": {
+                                  "Resource": {
+                                    "id": "Resource",
+                                    "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signup/OPTIONS/Resource",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                      "aws:cdk:cloudformation:props": {
+                                        "apiKeyRequired": false,
+                                        "authorizationType": "NONE",
+                                        "httpMethod": "OPTIONS",
+                                        "integration": {
+                                          "type": "MOCK",
+                                          "requestTemplates": {
+                                            "application/json": "{ statusCode: 200 }"
+                                          },
+                                          "integrationResponses": [
+                                            {
+                                              "statusCode": "204",
+                                              "responseParameters": {
+                                                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                                                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+                                              }
+                                            }
+                                          ]
+                                        },
+                                        "methodResponses": [
+                                          {
+                                            "statusCode": "204",
+                                            "responseParameters": {
+                                              "method.response.header.Access-Control-Allow-Headers": true,
+                                              "method.response.header.Access-Control-Allow-Origin": true,
+                                              "method.response.header.Access-Control-Allow-Methods": true
+                                            }
+                                          }
+                                        ],
+                                        "resourceId": {
+                                          "Ref": "AuthServiceApiauthsignup2FA1E77F"
+                                        },
+                                        "restApiId": {
+                                          "Ref": "AuthServiceApi6F145F59"
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                      "version": "2.88.0"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                                  "version": "2.88.0"
+                                }
+                              },
+                              "POST": {
+                                "id": "POST",
+                                "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signup/POST",
+                                "children": {
+                                  "ApiPermission.RestAPIStackAuthServiceApi0F27BA19.POST..auth.signup": {
+                                    "id": "ApiPermission.RestAPIStackAuthServiceApi0F27BA19.POST..auth.signup",
+                                    "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signup/POST/ApiPermission.RestAPIStackAuthServiceApi0F27BA19.POST..auth.signup",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                      "aws:cdk:cloudformation:props": {
+                                        "action": "lambda:InvokeFunction",
+                                        "functionName": {
+                                          "Fn::GetAtt": [
+                                            "AuthServiceApiSignupFn42E54DA2",
+                                            "Arn"
+                                          ]
+                                        },
+                                        "principal": "apigateway.amazonaws.com",
+                                        "sourceArn": {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              "arn:",
+                                              {
+                                                "Ref": "AWS::Partition"
+                                              },
+                                              ":execute-api:",
+                                              {
+                                                "Ref": "AWS::Region"
+                                              },
+                                              ":",
+                                              {
+                                                "Ref": "AWS::AccountId"
+                                              },
+                                              ":",
+                                              {
+                                                "Ref": "AuthServiceApi6F145F59"
+                                              },
+                                              "/",
+                                              {
+                                                "Ref": "AuthServiceApiDeploymentStageprodEA127565"
+                                              },
+                                              "/POST/auth/signup"
+                                            ]
+                                          ]
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                      "version": "2.88.0"
+                                    }
+                                  },
+                                  "ApiPermission.Test.RestAPIStackAuthServiceApi0F27BA19.POST..auth.signup": {
+                                    "id": "ApiPermission.Test.RestAPIStackAuthServiceApi0F27BA19.POST..auth.signup",
+                                    "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signup/POST/ApiPermission.Test.RestAPIStackAuthServiceApi0F27BA19.POST..auth.signup",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                      "aws:cdk:cloudformation:props": {
+                                        "action": "lambda:InvokeFunction",
+                                        "functionName": {
+                                          "Fn::GetAtt": [
+                                            "AuthServiceApiSignupFn42E54DA2",
+                                            "Arn"
+                                          ]
+                                        },
+                                        "principal": "apigateway.amazonaws.com",
+                                        "sourceArn": {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              "arn:",
+                                              {
+                                                "Ref": "AWS::Partition"
+                                              },
+                                              ":execute-api:",
+                                              {
+                                                "Ref": "AWS::Region"
+                                              },
+                                              ":",
+                                              {
+                                                "Ref": "AWS::AccountId"
+                                              },
+                                              ":",
+                                              {
+                                                "Ref": "AuthServiceApi6F145F59"
+                                              },
+                                              "/test-invoke-stage/POST/auth/signup"
+                                            ]
+                                          ]
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                      "version": "2.88.0"
+                                    }
+                                  },
+                                  "Resource": {
+                                    "id": "Resource",
+                                    "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signup/POST/Resource",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                      "aws:cdk:cloudformation:props": {
+                                        "authorizationType": "NONE",
+                                        "httpMethod": "POST",
+                                        "integration": {
+                                          "type": "AWS_PROXY",
+                                          "uri": {
+                                            "Fn::Join": [
+                                              "",
+                                              [
+                                                "arn:",
+                                                {
+                                                  "Ref": "AWS::Partition"
+                                                },
+                                                ":apigateway:",
+                                                {
+                                                  "Ref": "AWS::Region"
+                                                },
+                                                ":lambda:path/2015-03-31/functions/",
+                                                {
+                                                  "Fn::GetAtt": [
+                                                    "AuthServiceApiSignupFn42E54DA2",
+                                                    "Arn"
+                                                  ]
+                                                },
+                                                "/invocations"
+                                              ]
+                                            ]
+                                          },
+                                          "integrationHttpMethod": "POST"
+                                        },
+                                        "resourceId": {
+                                          "Ref": "AuthServiceApiauthsignup2FA1E77F"
+                                        },
+                                        "restApiId": {
+                                          "Ref": "AuthServiceApi6F145F59"
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                      "version": "2.88.0"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                                  "version": "2.88.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.Resource",
+                              "version": "2.88.0"
+                            }
+                          },
+                          "confirm_signup": {
+                            "id": "confirm_signup",
+                            "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/confirm_signup",
+                            "children": {
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/confirm_signup/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Resource",
+                                  "aws:cdk:cloudformation:props": {
+                                    "parentId": {
+                                      "Ref": "AuthServiceApiauth4F918273"
+                                    },
+                                    "pathPart": "confirm_signup",
+                                    "restApiId": {
+                                      "Ref": "AuthServiceApi6F145F59"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.CfnResource",
+                                  "version": "2.88.0"
+                                }
+                              },
+                              "OPTIONS": {
+                                "id": "OPTIONS",
+                                "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/confirm_signup/OPTIONS",
+                                "children": {
+                                  "Resource": {
+                                    "id": "Resource",
+                                    "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/confirm_signup/OPTIONS/Resource",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                      "aws:cdk:cloudformation:props": {
+                                        "apiKeyRequired": false,
+                                        "authorizationType": "NONE",
+                                        "httpMethod": "OPTIONS",
+                                        "integration": {
+                                          "type": "MOCK",
+                                          "requestTemplates": {
+                                            "application/json": "{ statusCode: 200 }"
+                                          },
+                                          "integrationResponses": [
+                                            {
+                                              "statusCode": "204",
+                                              "responseParameters": {
+                                                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                                                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+                                              }
+                                            }
+                                          ]
+                                        },
+                                        "methodResponses": [
+                                          {
+                                            "statusCode": "204",
+                                            "responseParameters": {
+                                              "method.response.header.Access-Control-Allow-Headers": true,
+                                              "method.response.header.Access-Control-Allow-Origin": true,
+                                              "method.response.header.Access-Control-Allow-Methods": true
+                                            }
+                                          }
+                                        ],
+                                        "resourceId": {
+                                          "Ref": "AuthServiceApiauthconfirmsignup53051378"
+                                        },
+                                        "restApiId": {
+                                          "Ref": "AuthServiceApi6F145F59"
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                      "version": "2.88.0"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                                  "version": "2.88.0"
+                                }
+                              },
+                              "POST": {
+                                "id": "POST",
+                                "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/confirm_signup/POST",
+                                "children": {
+                                  "ApiPermission.RestAPIStackAuthServiceApi0F27BA19.POST..auth.confirm_signup": {
+                                    "id": "ApiPermission.RestAPIStackAuthServiceApi0F27BA19.POST..auth.confirm_signup",
+                                    "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/confirm_signup/POST/ApiPermission.RestAPIStackAuthServiceApi0F27BA19.POST..auth.confirm_signup",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                      "aws:cdk:cloudformation:props": {
+                                        "action": "lambda:InvokeFunction",
+                                        "functionName": {
+                                          "Fn::GetAtt": [
+                                            "AuthServiceApiConfirmFn0A585E3D",
+                                            "Arn"
+                                          ]
+                                        },
+                                        "principal": "apigateway.amazonaws.com",
+                                        "sourceArn": {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              "arn:",
+                                              {
+                                                "Ref": "AWS::Partition"
+                                              },
+                                              ":execute-api:",
+                                              {
+                                                "Ref": "AWS::Region"
+                                              },
+                                              ":",
+                                              {
+                                                "Ref": "AWS::AccountId"
+                                              },
+                                              ":",
+                                              {
+                                                "Ref": "AuthServiceApi6F145F59"
+                                              },
+                                              "/",
+                                              {
+                                                "Ref": "AuthServiceApiDeploymentStageprodEA127565"
+                                              },
+                                              "/POST/auth/confirm_signup"
+                                            ]
+                                          ]
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                      "version": "2.88.0"
+                                    }
+                                  },
+                                  "ApiPermission.Test.RestAPIStackAuthServiceApi0F27BA19.POST..auth.confirm_signup": {
+                                    "id": "ApiPermission.Test.RestAPIStackAuthServiceApi0F27BA19.POST..auth.confirm_signup",
+                                    "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/confirm_signup/POST/ApiPermission.Test.RestAPIStackAuthServiceApi0F27BA19.POST..auth.confirm_signup",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                      "aws:cdk:cloudformation:props": {
+                                        "action": "lambda:InvokeFunction",
+                                        "functionName": {
+                                          "Fn::GetAtt": [
+                                            "AuthServiceApiConfirmFn0A585E3D",
+                                            "Arn"
+                                          ]
+                                        },
+                                        "principal": "apigateway.amazonaws.com",
+                                        "sourceArn": {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              "arn:",
+                                              {
+                                                "Ref": "AWS::Partition"
+                                              },
+                                              ":execute-api:",
+                                              {
+                                                "Ref": "AWS::Region"
+                                              },
+                                              ":",
+                                              {
+                                                "Ref": "AWS::AccountId"
+                                              },
+                                              ":",
+                                              {
+                                                "Ref": "AuthServiceApi6F145F59"
+                                              },
+                                              "/test-invoke-stage/POST/auth/confirm_signup"
+                                            ]
+                                          ]
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                      "version": "2.88.0"
+                                    }
+                                  },
+                                  "Resource": {
+                                    "id": "Resource",
+                                    "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/confirm_signup/POST/Resource",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                      "aws:cdk:cloudformation:props": {
+                                        "authorizationType": "NONE",
+                                        "httpMethod": "POST",
+                                        "integration": {
+                                          "type": "AWS_PROXY",
+                                          "uri": {
+                                            "Fn::Join": [
+                                              "",
+                                              [
+                                                "arn:",
+                                                {
+                                                  "Ref": "AWS::Partition"
+                                                },
+                                                ":apigateway:",
+                                                {
+                                                  "Ref": "AWS::Region"
+                                                },
+                                                ":lambda:path/2015-03-31/functions/",
+                                                {
+                                                  "Fn::GetAtt": [
+                                                    "AuthServiceApiConfirmFn0A585E3D",
+                                                    "Arn"
+                                                  ]
+                                                },
+                                                "/invocations"
+                                              ]
+                                            ]
+                                          },
+                                          "integrationHttpMethod": "POST"
+                                        },
+                                        "resourceId": {
+                                          "Ref": "AuthServiceApiauthconfirmsignup53051378"
+                                        },
+                                        "restApiId": {
+                                          "Ref": "AuthServiceApi6F145F59"
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                      "version": "2.88.0"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                                  "version": "2.88.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.Resource",
+                              "version": "2.88.0"
+                            }
+                          },
+                          "signout": {
+                            "id": "signout",
+                            "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signout",
+                            "children": {
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signout/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Resource",
+                                  "aws:cdk:cloudformation:props": {
+                                    "parentId": {
+                                      "Ref": "AuthServiceApiauth4F918273"
+                                    },
+                                    "pathPart": "signout",
+                                    "restApiId": {
+                                      "Ref": "AuthServiceApi6F145F59"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.CfnResource",
+                                  "version": "2.88.0"
+                                }
+                              },
+                              "OPTIONS": {
+                                "id": "OPTIONS",
+                                "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signout/OPTIONS",
+                                "children": {
+                                  "Resource": {
+                                    "id": "Resource",
+                                    "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signout/OPTIONS/Resource",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                      "aws:cdk:cloudformation:props": {
+                                        "apiKeyRequired": false,
+                                        "authorizationType": "NONE",
+                                        "httpMethod": "OPTIONS",
+                                        "integration": {
+                                          "type": "MOCK",
+                                          "requestTemplates": {
+                                            "application/json": "{ statusCode: 200 }"
+                                          },
+                                          "integrationResponses": [
+                                            {
+                                              "statusCode": "204",
+                                              "responseParameters": {
+                                                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                                                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+                                              }
+                                            }
+                                          ]
+                                        },
+                                        "methodResponses": [
+                                          {
+                                            "statusCode": "204",
+                                            "responseParameters": {
+                                              "method.response.header.Access-Control-Allow-Headers": true,
+                                              "method.response.header.Access-Control-Allow-Origin": true,
+                                              "method.response.header.Access-Control-Allow-Methods": true
+                                            }
+                                          }
+                                        ],
+                                        "resourceId": {
+                                          "Ref": "AuthServiceApiauthsignout9DEA4640"
+                                        },
+                                        "restApiId": {
+                                          "Ref": "AuthServiceApi6F145F59"
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                      "version": "2.88.0"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                                  "version": "2.88.0"
+                                }
+                              },
+                              "GET": {
+                                "id": "GET",
+                                "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signout/GET",
+                                "children": {
+                                  "ApiPermission.RestAPIStackAuthServiceApi0F27BA19.GET..auth.signout": {
+                                    "id": "ApiPermission.RestAPIStackAuthServiceApi0F27BA19.GET..auth.signout",
+                                    "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signout/GET/ApiPermission.RestAPIStackAuthServiceApi0F27BA19.GET..auth.signout",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                      "aws:cdk:cloudformation:props": {
+                                        "action": "lambda:InvokeFunction",
+                                        "functionName": {
+                                          "Fn::GetAtt": [
+                                            "AuthServiceApiSignoutFn0B9011EB",
+                                            "Arn"
+                                          ]
+                                        },
+                                        "principal": "apigateway.amazonaws.com",
+                                        "sourceArn": {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              "arn:",
+                                              {
+                                                "Ref": "AWS::Partition"
+                                              },
+                                              ":execute-api:",
+                                              {
+                                                "Ref": "AWS::Region"
+                                              },
+                                              ":",
+                                              {
+                                                "Ref": "AWS::AccountId"
+                                              },
+                                              ":",
+                                              {
+                                                "Ref": "AuthServiceApi6F145F59"
+                                              },
+                                              "/",
+                                              {
+                                                "Ref": "AuthServiceApiDeploymentStageprodEA127565"
+                                              },
+                                              "/GET/auth/signout"
+                                            ]
+                                          ]
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                      "version": "2.88.0"
+                                    }
+                                  },
+                                  "ApiPermission.Test.RestAPIStackAuthServiceApi0F27BA19.GET..auth.signout": {
+                                    "id": "ApiPermission.Test.RestAPIStackAuthServiceApi0F27BA19.GET..auth.signout",
+                                    "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signout/GET/ApiPermission.Test.RestAPIStackAuthServiceApi0F27BA19.GET..auth.signout",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                      "aws:cdk:cloudformation:props": {
+                                        "action": "lambda:InvokeFunction",
+                                        "functionName": {
+                                          "Fn::GetAtt": [
+                                            "AuthServiceApiSignoutFn0B9011EB",
+                                            "Arn"
+                                          ]
+                                        },
+                                        "principal": "apigateway.amazonaws.com",
+                                        "sourceArn": {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              "arn:",
+                                              {
+                                                "Ref": "AWS::Partition"
+                                              },
+                                              ":execute-api:",
+                                              {
+                                                "Ref": "AWS::Region"
+                                              },
+                                              ":",
+                                              {
+                                                "Ref": "AWS::AccountId"
+                                              },
+                                              ":",
+                                              {
+                                                "Ref": "AuthServiceApi6F145F59"
+                                              },
+                                              "/test-invoke-stage/GET/auth/signout"
+                                            ]
+                                          ]
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                      "version": "2.88.0"
+                                    }
+                                  },
+                                  "Resource": {
+                                    "id": "Resource",
+                                    "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signout/GET/Resource",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                      "aws:cdk:cloudformation:props": {
+                                        "authorizationType": "NONE",
+                                        "httpMethod": "GET",
+                                        "integration": {
+                                          "type": "AWS_PROXY",
+                                          "uri": {
+                                            "Fn::Join": [
+                                              "",
+                                              [
+                                                "arn:",
+                                                {
+                                                  "Ref": "AWS::Partition"
+                                                },
+                                                ":apigateway:",
+                                                {
+                                                  "Ref": "AWS::Region"
+                                                },
+                                                ":lambda:path/2015-03-31/functions/",
+                                                {
+                                                  "Fn::GetAtt": [
+                                                    "AuthServiceApiSignoutFn0B9011EB",
+                                                    "Arn"
+                                                  ]
+                                                },
+                                                "/invocations"
+                                              ]
+                                            ]
+                                          },
+                                          "integrationHttpMethod": "POST"
+                                        },
+                                        "resourceId": {
+                                          "Ref": "AuthServiceApiauthsignout9DEA4640"
+                                        },
+                                        "restApiId": {
+                                          "Ref": "AuthServiceApi6F145F59"
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                      "version": "2.88.0"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                                  "version": "2.88.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.Resource",
+                              "version": "2.88.0"
+                            }
+                          },
+                          "signin": {
+                            "id": "signin",
+                            "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signin",
+                            "children": {
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signin/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Resource",
+                                  "aws:cdk:cloudformation:props": {
+                                    "parentId": {
+                                      "Ref": "AuthServiceApiauth4F918273"
+                                    },
+                                    "pathPart": "signin",
+                                    "restApiId": {
+                                      "Ref": "AuthServiceApi6F145F59"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.CfnResource",
+                                  "version": "2.88.0"
+                                }
+                              },
+                              "OPTIONS": {
+                                "id": "OPTIONS",
+                                "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signin/OPTIONS",
+                                "children": {
+                                  "Resource": {
+                                    "id": "Resource",
+                                    "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signin/OPTIONS/Resource",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                      "aws:cdk:cloudformation:props": {
+                                        "apiKeyRequired": false,
+                                        "authorizationType": "NONE",
+                                        "httpMethod": "OPTIONS",
+                                        "integration": {
+                                          "type": "MOCK",
+                                          "requestTemplates": {
+                                            "application/json": "{ statusCode: 200 }"
+                                          },
+                                          "integrationResponses": [
+                                            {
+                                              "statusCode": "204",
+                                              "responseParameters": {
+                                                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                                                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+                                              }
+                                            }
+                                          ]
+                                        },
+                                        "methodResponses": [
+                                          {
+                                            "statusCode": "204",
+                                            "responseParameters": {
+                                              "method.response.header.Access-Control-Allow-Headers": true,
+                                              "method.response.header.Access-Control-Allow-Origin": true,
+                                              "method.response.header.Access-Control-Allow-Methods": true
+                                            }
+                                          }
+                                        ],
+                                        "resourceId": {
+                                          "Ref": "AuthServiceApiauthsigninAC698811"
+                                        },
+                                        "restApiId": {
+                                          "Ref": "AuthServiceApi6F145F59"
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                      "version": "2.88.0"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                                  "version": "2.88.0"
+                                }
+                              },
+                              "POST": {
+                                "id": "POST",
+                                "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signin/POST",
+                                "children": {
+                                  "ApiPermission.RestAPIStackAuthServiceApi0F27BA19.POST..auth.signin": {
+                                    "id": "ApiPermission.RestAPIStackAuthServiceApi0F27BA19.POST..auth.signin",
+                                    "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signin/POST/ApiPermission.RestAPIStackAuthServiceApi0F27BA19.POST..auth.signin",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                      "aws:cdk:cloudformation:props": {
+                                        "action": "lambda:InvokeFunction",
+                                        "functionName": {
+                                          "Fn::GetAtt": [
+                                            "AuthServiceApiSigninFnD683380D",
+                                            "Arn"
+                                          ]
+                                        },
+                                        "principal": "apigateway.amazonaws.com",
+                                        "sourceArn": {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              "arn:",
+                                              {
+                                                "Ref": "AWS::Partition"
+                                              },
+                                              ":execute-api:",
+                                              {
+                                                "Ref": "AWS::Region"
+                                              },
+                                              ":",
+                                              {
+                                                "Ref": "AWS::AccountId"
+                                              },
+                                              ":",
+                                              {
+                                                "Ref": "AuthServiceApi6F145F59"
+                                              },
+                                              "/",
+                                              {
+                                                "Ref": "AuthServiceApiDeploymentStageprodEA127565"
+                                              },
+                                              "/POST/auth/signin"
+                                            ]
+                                          ]
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                      "version": "2.88.0"
+                                    }
+                                  },
+                                  "ApiPermission.Test.RestAPIStackAuthServiceApi0F27BA19.POST..auth.signin": {
+                                    "id": "ApiPermission.Test.RestAPIStackAuthServiceApi0F27BA19.POST..auth.signin",
+                                    "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signin/POST/ApiPermission.Test.RestAPIStackAuthServiceApi0F27BA19.POST..auth.signin",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                      "aws:cdk:cloudformation:props": {
+                                        "action": "lambda:InvokeFunction",
+                                        "functionName": {
+                                          "Fn::GetAtt": [
+                                            "AuthServiceApiSigninFnD683380D",
+                                            "Arn"
+                                          ]
+                                        },
+                                        "principal": "apigateway.amazonaws.com",
+                                        "sourceArn": {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              "arn:",
+                                              {
+                                                "Ref": "AWS::Partition"
+                                              },
+                                              ":execute-api:",
+                                              {
+                                                "Ref": "AWS::Region"
+                                              },
+                                              ":",
+                                              {
+                                                "Ref": "AWS::AccountId"
+                                              },
+                                              ":",
+                                              {
+                                                "Ref": "AuthServiceApi6F145F59"
+                                              },
+                                              "/test-invoke-stage/POST/auth/signin"
+                                            ]
+                                          ]
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                      "version": "2.88.0"
+                                    }
+                                  },
+                                  "Resource": {
+                                    "id": "Resource",
+                                    "path": "RestAPIStack/AuthServiceApi/AuthServiceApi/Default/auth/signin/POST/Resource",
+                                    "attributes": {
+                                      "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                      "aws:cdk:cloudformation:props": {
+                                        "authorizationType": "NONE",
+                                        "httpMethod": "POST",
+                                        "integration": {
+                                          "type": "AWS_PROXY",
+                                          "uri": {
+                                            "Fn::Join": [
+                                              "",
+                                              [
+                                                "arn:",
+                                                {
+                                                  "Ref": "AWS::Partition"
+                                                },
+                                                ":apigateway:",
+                                                {
+                                                  "Ref": "AWS::Region"
+                                                },
+                                                ":lambda:path/2015-03-31/functions/",
+                                                {
+                                                  "Fn::GetAtt": [
+                                                    "AuthServiceApiSigninFnD683380D",
+                                                    "Arn"
+                                                  ]
+                                                },
+                                                "/invocations"
+                                              ]
+                                            ]
+                                          },
+                                          "integrationHttpMethod": "POST"
+                                        },
+                                        "resourceId": {
+                                          "Ref": "AuthServiceApiauthsigninAC698811"
+                                        },
+                                        "restApiId": {
+                                          "Ref": "AuthServiceApi6F145F59"
+                                        }
+                                      }
+                                    },
+                                    "constructInfo": {
+                                      "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                      "version": "2.88.0"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                                  "version": "2.88.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.Resource",
+                              "version": "2.88.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.Resource",
+                          "version": "2.88.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.ResourceBase",
+                      "version": "2.88.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.RestApi",
+                  "version": "2.88.0"
+                }
+              },
+              "SignupFn": {
+                "id": "SignupFn",
+                "path": "RestAPIStack/AuthServiceApi/SignupFn",
+                "children": {
+                  "ServiceRole": {
+                    "id": "ServiceRole",
+                    "path": "RestAPIStack/AuthServiceApi/SignupFn/ServiceRole",
+                    "children": {
+                      "ImportServiceRole": {
+                        "id": "ImportServiceRole",
+                        "path": "RestAPIStack/AuthServiceApi/SignupFn/ServiceRole/ImportServiceRole",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.88.0"
+                        }
+                      },
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "RestAPIStack/AuthServiceApi/SignupFn/ServiceRole/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                          "aws:cdk:cloudformation:props": {
+                            "assumeRolePolicyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "sts:AssumeRole",
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "Service": "lambda.amazonaws.com"
+                                  }
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "managedPolicyArns": [
+                              {
+                                "Fn::Join": [
+                                  "",
+                                  [
+                                    "arn:",
+                                    {
+                                      "Ref": "AWS::Partition"
+                                    },
+                                    ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                          "version": "2.88.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Role",
+                      "version": "2.88.0"
+                    }
+                  },
+                  "Code": {
+                    "id": "Code",
+                    "path": "RestAPIStack/AuthServiceApi/SignupFn/Code",
+                    "children": {
+                      "Stage": {
+                        "id": "Stage",
+                        "path": "RestAPIStack/AuthServiceApi/SignupFn/Code/Stage",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.AssetStaging",
+                          "version": "2.88.0"
+                        }
+                      },
+                      "AssetBucket": {
+                        "id": "AssetBucket",
+                        "path": "RestAPIStack/AuthServiceApi/SignupFn/Code/AssetBucket",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                          "version": "2.88.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                      "version": "2.88.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "RestAPIStack/AuthServiceApi/SignupFn/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                      "aws:cdk:cloudformation:props": {
+                        "architectures": [
+                          "arm64"
+                        ],
+                        "code": {
+                          "s3Bucket": {
+                            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                          },
+                          "s3Key": "a9a94fd7041a07e611e4f1bcf5ce535ed14f2587ca822c7742be1d21de47f4f8.zip"
+                        },
+                        "environment": {
+                          "variables": {
+                            "USER_POOL_ID": {
+                              "Ref": "UserPool6BA7E5F2"
+                            },
+                            "CLIENT_ID": {
+                              "Ref": "UserPoolAppClientDD0407EC"
+                            },
+                            "REGION": {
+                              "Ref": "AWS::Region"
+                            },
+                            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
+                          }
+                        },
+                        "handler": "index.handler",
+                        "memorySize": 128,
+                        "role": {
+                          "Fn::GetAtt": [
+                            "AuthServiceApiSignupFnServiceRole449F516A",
+                            "Arn"
+                          ]
+                        },
+                        "runtime": "nodejs16.x",
+                        "timeout": 10
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                      "version": "2.88.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda_nodejs.NodejsFunction",
+                  "version": "2.88.0"
+                }
+              },
+              "ConfirmFn": {
+                "id": "ConfirmFn",
+                "path": "RestAPIStack/AuthServiceApi/ConfirmFn",
+                "children": {
+                  "ServiceRole": {
+                    "id": "ServiceRole",
+                    "path": "RestAPIStack/AuthServiceApi/ConfirmFn/ServiceRole",
+                    "children": {
+                      "ImportServiceRole": {
+                        "id": "ImportServiceRole",
+                        "path": "RestAPIStack/AuthServiceApi/ConfirmFn/ServiceRole/ImportServiceRole",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.88.0"
+                        }
+                      },
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "RestAPIStack/AuthServiceApi/ConfirmFn/ServiceRole/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                          "aws:cdk:cloudformation:props": {
+                            "assumeRolePolicyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "sts:AssumeRole",
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "Service": "lambda.amazonaws.com"
+                                  }
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "managedPolicyArns": [
+                              {
+                                "Fn::Join": [
+                                  "",
+                                  [
+                                    "arn:",
+                                    {
+                                      "Ref": "AWS::Partition"
+                                    },
+                                    ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                          "version": "2.88.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Role",
+                      "version": "2.88.0"
+                    }
+                  },
+                  "Code": {
+                    "id": "Code",
+                    "path": "RestAPIStack/AuthServiceApi/ConfirmFn/Code",
+                    "children": {
+                      "Stage": {
+                        "id": "Stage",
+                        "path": "RestAPIStack/AuthServiceApi/ConfirmFn/Code/Stage",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.AssetStaging",
+                          "version": "2.88.0"
+                        }
+                      },
+                      "AssetBucket": {
+                        "id": "AssetBucket",
+                        "path": "RestAPIStack/AuthServiceApi/ConfirmFn/Code/AssetBucket",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                          "version": "2.88.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                      "version": "2.88.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "RestAPIStack/AuthServiceApi/ConfirmFn/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                      "aws:cdk:cloudformation:props": {
+                        "architectures": [
+                          "arm64"
+                        ],
+                        "code": {
+                          "s3Bucket": {
+                            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                          },
+                          "s3Key": "63c87acabbd81a0f6bb93a1d93dfd85b779581f729eb933c138b3b6dc712c24d.zip"
+                        },
+                        "environment": {
+                          "variables": {
+                            "USER_POOL_ID": {
+                              "Ref": "UserPool6BA7E5F2"
+                            },
+                            "CLIENT_ID": {
+                              "Ref": "UserPoolAppClientDD0407EC"
+                            },
+                            "REGION": {
+                              "Ref": "AWS::Region"
+                            },
+                            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
+                          }
+                        },
+                        "handler": "index.handler",
+                        "memorySize": 128,
+                        "role": {
+                          "Fn::GetAtt": [
+                            "AuthServiceApiConfirmFnServiceRole2967189E",
+                            "Arn"
+                          ]
+                        },
+                        "runtime": "nodejs16.x",
+                        "timeout": 10
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                      "version": "2.88.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda_nodejs.NodejsFunction",
+                  "version": "2.88.0"
+                }
+              },
+              "SignoutFn": {
+                "id": "SignoutFn",
+                "path": "RestAPIStack/AuthServiceApi/SignoutFn",
+                "children": {
+                  "ServiceRole": {
+                    "id": "ServiceRole",
+                    "path": "RestAPIStack/AuthServiceApi/SignoutFn/ServiceRole",
+                    "children": {
+                      "ImportServiceRole": {
+                        "id": "ImportServiceRole",
+                        "path": "RestAPIStack/AuthServiceApi/SignoutFn/ServiceRole/ImportServiceRole",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.88.0"
+                        }
+                      },
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "RestAPIStack/AuthServiceApi/SignoutFn/ServiceRole/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                          "aws:cdk:cloudformation:props": {
+                            "assumeRolePolicyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "sts:AssumeRole",
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "Service": "lambda.amazonaws.com"
+                                  }
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "managedPolicyArns": [
+                              {
+                                "Fn::Join": [
+                                  "",
+                                  [
+                                    "arn:",
+                                    {
+                                      "Ref": "AWS::Partition"
+                                    },
+                                    ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                          "version": "2.88.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Role",
+                      "version": "2.88.0"
+                    }
+                  },
+                  "Code": {
+                    "id": "Code",
+                    "path": "RestAPIStack/AuthServiceApi/SignoutFn/Code",
+                    "children": {
+                      "Stage": {
+                        "id": "Stage",
+                        "path": "RestAPIStack/AuthServiceApi/SignoutFn/Code/Stage",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.AssetStaging",
+                          "version": "2.88.0"
+                        }
+                      },
+                      "AssetBucket": {
+                        "id": "AssetBucket",
+                        "path": "RestAPIStack/AuthServiceApi/SignoutFn/Code/AssetBucket",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                          "version": "2.88.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                      "version": "2.88.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "RestAPIStack/AuthServiceApi/SignoutFn/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                      "aws:cdk:cloudformation:props": {
+                        "architectures": [
+                          "arm64"
+                        ],
+                        "code": {
+                          "s3Bucket": {
+                            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                          },
+                          "s3Key": "7564b3916c1f0810e96c6dcdf0764b5b899420a8a6ce0015f43bf66eb5116441.zip"
+                        },
+                        "environment": {
+                          "variables": {
+                            "USER_POOL_ID": {
+                              "Ref": "UserPool6BA7E5F2"
+                            },
+                            "CLIENT_ID": {
+                              "Ref": "UserPoolAppClientDD0407EC"
+                            },
+                            "REGION": {
+                              "Ref": "AWS::Region"
+                            },
+                            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
+                          }
+                        },
+                        "handler": "index.handler",
+                        "memorySize": 128,
+                        "role": {
+                          "Fn::GetAtt": [
+                            "AuthServiceApiSignoutFnServiceRole47081A24",
+                            "Arn"
+                          ]
+                        },
+                        "runtime": "nodejs16.x",
+                        "timeout": 10
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                      "version": "2.88.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda_nodejs.NodejsFunction",
+                  "version": "2.88.0"
+                }
+              },
+              "SigninFn": {
+                "id": "SigninFn",
+                "path": "RestAPIStack/AuthServiceApi/SigninFn",
+                "children": {
+                  "ServiceRole": {
+                    "id": "ServiceRole",
+                    "path": "RestAPIStack/AuthServiceApi/SigninFn/ServiceRole",
+                    "children": {
+                      "ImportServiceRole": {
+                        "id": "ImportServiceRole",
+                        "path": "RestAPIStack/AuthServiceApi/SigninFn/ServiceRole/ImportServiceRole",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.88.0"
+                        }
+                      },
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "RestAPIStack/AuthServiceApi/SigninFn/ServiceRole/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                          "aws:cdk:cloudformation:props": {
+                            "assumeRolePolicyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "sts:AssumeRole",
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "Service": "lambda.amazonaws.com"
+                                  }
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "managedPolicyArns": [
+                              {
+                                "Fn::Join": [
+                                  "",
+                                  [
+                                    "arn:",
+                                    {
+                                      "Ref": "AWS::Partition"
+                                    },
+                                    ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                          "version": "2.88.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Role",
+                      "version": "2.88.0"
+                    }
+                  },
+                  "Code": {
+                    "id": "Code",
+                    "path": "RestAPIStack/AuthServiceApi/SigninFn/Code",
+                    "children": {
+                      "Stage": {
+                        "id": "Stage",
+                        "path": "RestAPIStack/AuthServiceApi/SigninFn/Code/Stage",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.AssetStaging",
+                          "version": "2.88.0"
+                        }
+                      },
+                      "AssetBucket": {
+                        "id": "AssetBucket",
+                        "path": "RestAPIStack/AuthServiceApi/SigninFn/Code/AssetBucket",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                          "version": "2.88.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                      "version": "2.88.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "RestAPIStack/AuthServiceApi/SigninFn/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                      "aws:cdk:cloudformation:props": {
+                        "architectures": [
+                          "arm64"
+                        ],
+                        "code": {
+                          "s3Bucket": {
+                            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                          },
+                          "s3Key": "814b05a6edc4cf3454bb8039277fe5186f639a7d767415a6f70108d4a6bf5fd2.zip"
+                        },
+                        "environment": {
+                          "variables": {
+                            "USER_POOL_ID": {
+                              "Ref": "UserPool6BA7E5F2"
+                            },
+                            "CLIENT_ID": {
+                              "Ref": "UserPoolAppClientDD0407EC"
+                            },
+                            "REGION": {
+                              "Ref": "AWS::Region"
+                            },
+                            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
+                          }
+                        },
+                        "handler": "index.handler",
+                        "memorySize": 128,
+                        "role": {
+                          "Fn::GetAtt": [
+                            "AuthServiceApiSigninFnServiceRole63D70D3D",
+                            "Arn"
+                          ]
+                        },
+                        "runtime": "nodejs16.x",
+                        "timeout": 10
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                      "version": "2.88.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda_nodejs.NodejsFunction",
+                  "version": "2.88.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.3.0"
+            }
+          },
           "MoviesTable": {
             "id": "MoviesTable",
             "path": "RestAPIStack/MoviesTable",
@@ -379,7 +2263,7 @@
                     ],
                     "code": {
                       "s3Bucket": {
-                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
                       "s3Key": "d130a3875c6c9592f382f73165d079594d31f6f8288dfb46273ee9fd4e3a3973.zip"
                     },
@@ -574,7 +2458,7 @@
                     ],
                     "code": {
                       "s3Bucket": {
-                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
                       "s3Key": "96a1201b656d3c20fbb68a11822ce221d2130e474152512a3d5d8f21f9b187b0.zip"
                     },
@@ -770,9 +2654,9 @@
                     ],
                     "code": {
                       "s3Bucket": {
-                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "eec4cc6835682aa59640606cbbaf3f65bf24a5da236b81e7b1b5077589679e08.zip"
+                      "s3Key": "ce73270d47dfed12aa44aafb9356ebc2d9e982c079ee6bec5db34f36db1659ce.zip"
                     },
                     "environment": {
                       "variables": {
@@ -966,9 +2850,9 @@
                     ],
                     "code": {
                       "s3Bucket": {
-                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "0fafd8b4f988a54d50bd624cea1dd7cb94f26953c736a7c09bc76c15318da46c.zip"
+                      "s3Key": "b44882222b5a0d5ccfd6ec6e6ece890e7156c3aa69b49bf1e7531cf186f187df.zip"
                     },
                     "environment": {
                       "variables": {
@@ -1169,9 +3053,9 @@
                     ],
                     "code": {
                       "s3Bucket": {
-                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "dcb51343944bb824bfd33a4cc49237d42c0b0f9f1a56df5a408ca87793dab689.zip"
+                      "s3Key": "fc7999b4f38f608db6b5b02bd2ea849700a9f6678ae96b102ec4a7d0849265a9.zip"
                     },
                     "environment": {
                       "variables": {
@@ -1385,9 +3269,9 @@
                     ],
                     "code": {
                       "s3Bucket": {
-                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "5c3b4e1a0677f011a5792d75d1599cd4030bb8db4758aa13cb59de3710f42886.zip"
+                      "s3Key": "c0977ec8a147cda790d4633c0891f209e854063d7cbdcc6ce9dcb7310c95fc0e.zip"
                     },
                     "environment": {
                       "variables": {
@@ -1588,9 +3472,9 @@
                     ],
                     "code": {
                       "s3Bucket": {
-                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "41bc83ae207b94fd2c30c7f5a824234559899d520f75802b9d849034c1d11b05.zip"
+                      "s3Key": "1edf1f6e56406e0844709e59d50c51ae467e7b8d7e389d2228cc4061abdefb34.zip"
                     },
                     "environment": {
                       "variables": {
@@ -1791,9 +3675,9 @@
                     ],
                     "code": {
                       "s3Bucket": {
-                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "a0aac878cdf8d047acb7143eae48b4235f86f11aaea483475b3c8939357ce98b.zip"
+                      "s3Key": "ba33562dc5efff417cdbc9639222e1d4bf40da76d9fbb00c34a4fba93a7ff5a8.zip"
                     },
                     "environment": {
                       "variables": {
@@ -1994,9 +3878,9 @@
                     ],
                     "code": {
                       "s3Bucket": {
-                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "8095829fc36f801ab56a480d174812ed4aff6101a5a17dd23574b05511fa74e4.zip"
+                      "s3Key": "377fc7c0d13a99362f7bac7023150945ce9ff66badc2135e1847de5a6599bd54.zip"
                     },
                     "environment": {
                       "variables": {
@@ -2201,9 +4085,9 @@
                     ],
                     "code": {
                       "s3Bucket": {
-                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "a7063dcfd3705b4f8e41633cd1f69f35c781fbd8b988ee39d669ed1661c0a0dd.zip"
+                      "s3Key": "fda1343c0344208ed38b30e5e520751b611f494a1ede0571cd0100fa08613266.zip"
                     },
                     "environment": {
                       "variables": {
@@ -2234,6 +4118,258 @@
             },
             "constructInfo": {
               "fqn": "aws-cdk-lib.aws_lambda_nodejs.NodejsFunction",
+              "version": "2.88.0"
+            }
+          },
+          "AuthorizerFn": {
+            "id": "AuthorizerFn",
+            "path": "RestAPIStack/AuthorizerFn",
+            "children": {
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "RestAPIStack/AuthorizerFn/ServiceRole",
+                "children": {
+                  "ImportServiceRole": {
+                    "id": "ImportServiceRole",
+                    "path": "RestAPIStack/AuthorizerFn/ServiceRole/ImportServiceRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.88.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "RestAPIStack/AuthorizerFn/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.88.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.88.0"
+                }
+              },
+              "Code": {
+                "id": "Code",
+                "path": "RestAPIStack/AuthorizerFn/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "RestAPIStack/AuthorizerFn/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.88.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "RestAPIStack/AuthorizerFn/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.88.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.88.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "RestAPIStack/AuthorizerFn/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": {
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                      },
+                      "s3Key": "4f3c3cae13faa369920635370390a4ec92f14d1fc09de85b6ed5fb8ae6220b2f.zip"
+                    },
+                    "environment": {
+                      "variables": {
+                        "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
+                      }
+                    },
+                    "handler": "index.handler",
+                    "role": {
+                      "Fn::GetAtt": [
+                        "AuthorizerFnServiceRole91AE9242",
+                        "Arn"
+                      ]
+                    },
+                    "runtime": "nodejs18.x"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.88.0"
+                }
+              },
+              "RestAPIStackRequestAuthorizer12A96582:Permissions": {
+                "id": "RestAPIStackRequestAuthorizer12A96582:Permissions",
+                "path": "RestAPIStack/AuthorizerFn/RestAPIStackRequestAuthorizer12A96582:Permissions",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                  "aws:cdk:cloudformation:props": {
+                    "action": "lambda:InvokeFunction",
+                    "functionName": {
+                      "Fn::GetAtt": [
+                        "AuthorizerFn97B9AA7C",
+                        "Arn"
+                      ]
+                    },
+                    "principal": "apigateway.amazonaws.com",
+                    "sourceArn": {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:",
+                          {
+                            "Ref": "AWS::Partition"
+                          },
+                          ":execute-api:",
+                          {
+                            "Ref": "AWS::Region"
+                          },
+                          ":",
+                          {
+                            "Ref": "AWS::AccountId"
+                          },
+                          ":",
+                          {
+                            "Ref": "RestAPI1CC12F26"
+                          },
+                          "/authorizers/",
+                          {
+                            "Ref": "RequestAuthorizer7473A0B3"
+                          }
+                        ]
+                      ]
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                  "version": "2.88.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda_nodejs.NodejsFunction",
+              "version": "2.88.0"
+            }
+          },
+          "RequestAuthorizer": {
+            "id": "RequestAuthorizer",
+            "path": "RestAPIStack/RequestAuthorizer",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "RestAPIStack/RequestAuthorizer/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Authorizer",
+                  "aws:cdk:cloudformation:props": {
+                    "authorizerResultTtlInSeconds": 0,
+                    "authorizerUri": {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:",
+                          {
+                            "Fn::Select": [
+                              1,
+                              {
+                                "Fn::Split": [
+                                  ":",
+                                  {
+                                    "Fn::GetAtt": [
+                                      "AuthorizerFn97B9AA7C",
+                                      "Arn"
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          ":apigateway:",
+                          {
+                            "Fn::Select": [
+                              3,
+                              {
+                                "Fn::Split": [
+                                  ":",
+                                  {
+                                    "Fn::GetAtt": [
+                                      "AuthorizerFn97B9AA7C",
+                                      "Arn"
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          ":lambda:path/2015-03-31/functions/",
+                          {
+                            "Fn::GetAtt": [
+                              "AuthorizerFn97B9AA7C",
+                              "Arn"
+                            ]
+                          },
+                          "/invocations"
+                        ]
+                      ]
+                    },
+                    "identitySource": "method.request.header.cookie",
+                    "name": "RestAPIStackRequestAuthorizer12A96582",
+                    "restApiId": {
+                      "Ref": "RestAPI1CC12F26"
+                    },
+                    "type": "REQUEST"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.CfnAuthorizer",
+                  "version": "2.88.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_apigateway.RequestAuthorizer",
               "version": "2.88.0"
             }
           },
@@ -2426,7 +4562,7 @@
                   "aws:cdk:cloudformation:props": {
                     "code": {
                       "s3Bucket": {
-                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-eu-west-1"
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
                       "s3Key": "099a3112386fa620b3069790dcf92c8e64bb5341760a8b0a76bfa843f8ad41df.zip"
                     },
@@ -2509,7 +4645,7 @@
                       "aws:cdk:cloudformation:type": "AWS::ApiGateway::Stage",
                       "aws:cdk:cloudformation:props": {
                         "deploymentId": {
-                          "Ref": "RestAPIDeploymentD35A53806331d246ad9a031a67aa6b078eff1c5b"
+                          "Ref": "RestAPIDeploymentD35A5380cb9e8a48001bb8661368c2cf50860ed1"
                         },
                         "restApiId": {
                           "Ref": "RestAPI1CC12F26"
@@ -2712,7 +4848,15 @@
                                   "Fn::Join": [
                                     "",
                                     [
-                                      "arn:aws:execute-api:eu-west-1:",
+                                      "arn:",
+                                      {
+                                        "Ref": "AWS::Partition"
+                                      },
+                                      ":execute-api:",
+                                      {
+                                        "Ref": "AWS::Region"
+                                      },
+                                      ":",
                                       {
                                         "Ref": "AWS::AccountId"
                                       },
@@ -2753,7 +4897,15 @@
                                   "Fn::Join": [
                                     "",
                                     [
-                                      "arn:aws:execute-api:eu-west-1:",
+                                      "arn:",
+                                      {
+                                        "Ref": "AWS::Partition"
+                                      },
+                                      ":execute-api:",
+                                      {
+                                        "Ref": "AWS::Region"
+                                      },
+                                      ":",
                                       {
                                         "Ref": "AWS::AccountId"
                                       },
@@ -2786,7 +4938,15 @@
                                     "Fn::Join": [
                                       "",
                                       [
-                                        "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/",
+                                        "arn:",
+                                        {
+                                          "Ref": "AWS::Partition"
+                                        },
+                                        ":apigateway:",
+                                        {
+                                          "Ref": "AWS::Region"
+                                        },
+                                        ":lambda:path/2015-03-31/functions/",
                                         {
                                           "Fn::GetAtt": [
                                             "GetAllMoviesFnD14CC45A",
@@ -2831,7 +4991,7 @@
                                 "action": "lambda:InvokeFunction",
                                 "functionName": {
                                   "Fn::GetAtt": [
-                                    "AddMovieFnA0261A58",
+                                    "AddReviewFnE8F4E4BE",
                                     "Arn"
                                   ]
                                 },
@@ -2840,7 +5000,15 @@
                                   "Fn::Join": [
                                     "",
                                     [
-                                      "arn:aws:execute-api:eu-west-1:",
+                                      "arn:",
+                                      {
+                                        "Ref": "AWS::Partition"
+                                      },
+                                      ":execute-api:",
+                                      {
+                                        "Ref": "AWS::Region"
+                                      },
+                                      ":",
                                       {
                                         "Ref": "AWS::AccountId"
                                       },
@@ -2872,7 +5040,7 @@
                                 "action": "lambda:InvokeFunction",
                                 "functionName": {
                                   "Fn::GetAtt": [
-                                    "AddMovieFnA0261A58",
+                                    "AddReviewFnE8F4E4BE",
                                     "Arn"
                                   ]
                                 },
@@ -2881,7 +5049,15 @@
                                   "Fn::Join": [
                                     "",
                                     [
-                                      "arn:aws:execute-api:eu-west-1:",
+                                      "arn:",
+                                      {
+                                        "Ref": "AWS::Partition"
+                                      },
+                                      ":execute-api:",
+                                      {
+                                        "Ref": "AWS::Region"
+                                      },
+                                      ":",
                                       {
                                         "Ref": "AWS::AccountId"
                                       },
@@ -2906,7 +5082,10 @@
                             "attributes": {
                               "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
                               "aws:cdk:cloudformation:props": {
-                                "authorizationType": "NONE",
+                                "authorizationType": "CUSTOM",
+                                "authorizerId": {
+                                  "Ref": "RequestAuthorizer7473A0B3"
+                                },
                                 "httpMethod": "POST",
                                 "integration": {
                                   "type": "AWS_PROXY",
@@ -2914,10 +5093,18 @@
                                     "Fn::Join": [
                                       "",
                                       [
-                                        "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/",
+                                        "arn:",
+                                        {
+                                          "Ref": "AWS::Partition"
+                                        },
+                                        ":apigateway:",
+                                        {
+                                          "Ref": "AWS::Region"
+                                        },
+                                        ":lambda:path/2015-03-31/functions/",
                                         {
                                           "Fn::GetAtt": [
-                                            "AddMovieFnA0261A58",
+                                            "AddReviewFnE8F4E4BE",
                                             "Arn"
                                           ]
                                         },
@@ -2968,7 +5155,15 @@
                                   "Fn::Join": [
                                     "",
                                     [
-                                      "arn:aws:execute-api:eu-west-1:",
+                                      "arn:",
+                                      {
+                                        "Ref": "AWS::Partition"
+                                      },
+                                      ":execute-api:",
+                                      {
+                                        "Ref": "AWS::Region"
+                                      },
+                                      ":",
                                       {
                                         "Ref": "AWS::AccountId"
                                       },
@@ -3009,7 +5204,15 @@
                                   "Fn::Join": [
                                     "",
                                     [
-                                      "arn:aws:execute-api:eu-west-1:",
+                                      "arn:",
+                                      {
+                                        "Ref": "AWS::Partition"
+                                      },
+                                      ":execute-api:",
+                                      {
+                                        "Ref": "AWS::Region"
+                                      },
+                                      ":",
                                       {
                                         "Ref": "AWS::AccountId"
                                       },
@@ -3034,7 +5237,10 @@
                             "attributes": {
                               "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
                               "aws:cdk:cloudformation:props": {
-                                "authorizationType": "NONE",
+                                "authorizationType": "CUSTOM",
+                                "authorizerId": {
+                                  "Ref": "RequestAuthorizer7473A0B3"
+                                },
                                 "httpMethod": "DELETE",
                                 "integration": {
                                   "type": "AWS_PROXY",
@@ -3042,7 +5248,15 @@
                                     "Fn::Join": [
                                       "",
                                       [
-                                        "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/",
+                                        "arn:",
+                                        {
+                                          "Ref": "AWS::Partition"
+                                        },
+                                        ":apigateway:",
+                                        {
+                                          "Ref": "AWS::Region"
+                                        },
+                                        ":lambda:path/2015-03-31/functions/",
                                         {
                                           "Fn::GetAtt": [
                                             "DeleteMovieFnCF59BB54",
@@ -3180,7 +5394,15 @@
                                       "Fn::Join": [
                                         "",
                                         [
-                                          "arn:aws:execute-api:eu-west-1:",
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":execute-api:",
+                                          {
+                                            "Ref": "AWS::Region"
+                                          },
+                                          ":",
                                           {
                                             "Ref": "AWS::AccountId"
                                           },
@@ -3221,7 +5443,15 @@
                                       "Fn::Join": [
                                         "",
                                         [
-                                          "arn:aws:execute-api:eu-west-1:",
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":execute-api:",
+                                          {
+                                            "Ref": "AWS::Region"
+                                          },
+                                          ":",
                                           {
                                             "Ref": "AWS::AccountId"
                                           },
@@ -3254,7 +5484,15 @@
                                         "Fn::Join": [
                                           "",
                                           [
-                                            "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/",
+                                            "arn:",
+                                            {
+                                              "Ref": "AWS::Partition"
+                                            },
+                                            ":apigateway:",
+                                            {
+                                              "Ref": "AWS::Region"
+                                            },
+                                            ":lambda:path/2015-03-31/functions/",
                                             {
                                               "Fn::GetAtt": [
                                                 "GetMovieByIdFn429FC61F",
@@ -3395,7 +5633,15 @@
                                           "Fn::Join": [
                                             "",
                                             [
-                                              "arn:aws:execute-api:eu-west-1:",
+                                              "arn:",
+                                              {
+                                                "Ref": "AWS::Partition"
+                                              },
+                                              ":execute-api:",
+                                              {
+                                                "Ref": "AWS::Region"
+                                              },
+                                              ":",
                                               {
                                                 "Ref": "AWS::AccountId"
                                               },
@@ -3436,7 +5682,15 @@
                                           "Fn::Join": [
                                             "",
                                             [
-                                              "arn:aws:execute-api:eu-west-1:",
+                                              "arn:",
+                                              {
+                                                "Ref": "AWS::Partition"
+                                              },
+                                              ":execute-api:",
+                                              {
+                                                "Ref": "AWS::Region"
+                                              },
+                                              ":",
                                               {
                                                 "Ref": "AWS::AccountId"
                                               },
@@ -3469,7 +5723,15 @@
                                             "Fn::Join": [
                                               "",
                                               [
-                                                "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/",
+                                                "arn:",
+                                                {
+                                                  "Ref": "AWS::Partition"
+                                                },
+                                                ":apigateway:",
+                                                {
+                                                  "Ref": "AWS::Region"
+                                                },
+                                                ":lambda:path/2015-03-31/functions/",
                                                 {
                                                   "Fn::GetAtt": [
                                                     "GetReviewByIdFn1432CD24",
@@ -3607,7 +5869,15 @@
                                               "Fn::Join": [
                                                 "",
                                                 [
-                                                  "arn:aws:execute-api:eu-west-1:",
+                                                  "arn:",
+                                                  {
+                                                    "Ref": "AWS::Partition"
+                                                  },
+                                                  ":execute-api:",
+                                                  {
+                                                    "Ref": "AWS::Region"
+                                                  },
+                                                  ":",
                                                   {
                                                     "Ref": "AWS::AccountId"
                                                   },
@@ -3648,7 +5918,15 @@
                                               "Fn::Join": [
                                                 "",
                                                 [
-                                                  "arn:aws:execute-api:eu-west-1:",
+                                                  "arn:",
+                                                  {
+                                                    "Ref": "AWS::Partition"
+                                                  },
+                                                  ":execute-api:",
+                                                  {
+                                                    "Ref": "AWS::Region"
+                                                  },
+                                                  ":",
                                                   {
                                                     "Ref": "AWS::AccountId"
                                                   },
@@ -3681,7 +5959,15 @@
                                                 "Fn::Join": [
                                                   "",
                                                   [
-                                                    "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/",
+                                                    "arn:",
+                                                    {
+                                                      "Ref": "AWS::Partition"
+                                                    },
+                                                    ":apigateway:",
+                                                    {
+                                                      "Ref": "AWS::Region"
+                                                    },
+                                                    ":lambda:path/2015-03-31/functions/",
                                                     {
                                                       "Fn::GetAtt": [
                                                         "GetReviewByReviewerNameOrYearFnF94A1CED",
@@ -3735,7 +6021,15 @@
                                               "Fn::Join": [
                                                 "",
                                                 [
-                                                  "arn:aws:execute-api:eu-west-1:",
+                                                  "arn:",
+                                                  {
+                                                    "Ref": "AWS::Partition"
+                                                  },
+                                                  ":execute-api:",
+                                                  {
+                                                    "Ref": "AWS::Region"
+                                                  },
+                                                  ":",
                                                   {
                                                     "Ref": "AWS::AccountId"
                                                   },
@@ -3776,7 +6070,15 @@
                                               "Fn::Join": [
                                                 "",
                                                 [
-                                                  "arn:aws:execute-api:eu-west-1:",
+                                                  "arn:",
+                                                  {
+                                                    "Ref": "AWS::Partition"
+                                                  },
+                                                  ":execute-api:",
+                                                  {
+                                                    "Ref": "AWS::Region"
+                                                  },
+                                                  ":",
                                                   {
                                                     "Ref": "AWS::AccountId"
                                                   },
@@ -3801,7 +6103,10 @@
                                         "attributes": {
                                           "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
                                           "aws:cdk:cloudformation:props": {
-                                            "authorizationType": "NONE",
+                                            "authorizationType": "CUSTOM",
+                                            "authorizerId": {
+                                              "Ref": "RequestAuthorizer7473A0B3"
+                                            },
                                             "httpMethod": "PUT",
                                             "integration": {
                                               "type": "AWS_PROXY",
@@ -3809,7 +6114,15 @@
                                                 "Fn::Join": [
                                                   "",
                                                   [
-                                                    "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/",
+                                                    "arn:",
+                                                    {
+                                                      "Ref": "AWS::Partition"
+                                                    },
+                                                    ":apigateway:",
+                                                    {
+                                                      "Ref": "AWS::Region"
+                                                    },
+                                                    ":lambda:path/2015-03-31/functions/",
                                                     {
                                                       "Fn::GetAtt": [
                                                         "ModifyReviewByReviewerNameFn98576E52",
@@ -3965,7 +6278,15 @@
                                       "Fn::Join": [
                                         "",
                                         [
-                                          "arn:aws:execute-api:eu-west-1:",
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":execute-api:",
+                                          {
+                                            "Ref": "AWS::Region"
+                                          },
+                                          ":",
                                           {
                                             "Ref": "AWS::AccountId"
                                           },
@@ -4006,7 +6327,15 @@
                                       "Fn::Join": [
                                         "",
                                         [
-                                          "arn:aws:execute-api:eu-west-1:",
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":execute-api:",
+                                          {
+                                            "Ref": "AWS::Region"
+                                          },
+                                          ":",
                                           {
                                             "Ref": "AWS::AccountId"
                                           },
@@ -4039,7 +6368,15 @@
                                         "Fn::Join": [
                                           "",
                                           [
-                                            "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/",
+                                            "arn:",
+                                            {
+                                              "Ref": "AWS::Partition"
+                                            },
+                                            ":apigateway:",
+                                            {
+                                              "Ref": "AWS::Region"
+                                            },
+                                            ":lambda:path/2015-03-31/functions/",
                                             {
                                               "Fn::GetAtt": [
                                                 "GetCastMemberFn1BEFFC9C",
@@ -4183,7 +6520,15 @@
                                       "Fn::Join": [
                                         "",
                                         [
-                                          "arn:aws:execute-api:eu-west-1:",
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":execute-api:",
+                                          {
+                                            "Ref": "AWS::Region"
+                                          },
+                                          ":",
                                           {
                                             "Ref": "AWS::AccountId"
                                           },
@@ -4224,7 +6569,15 @@
                                       "Fn::Join": [
                                         "",
                                         [
-                                          "arn:aws:execute-api:eu-west-1:",
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":execute-api:",
+                                          {
+                                            "Ref": "AWS::Region"
+                                          },
+                                          ":",
                                           {
                                             "Ref": "AWS::AccountId"
                                           },
@@ -4249,7 +6602,10 @@
                                 "attributes": {
                                   "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
                                   "aws:cdk:cloudformation:props": {
-                                    "authorizationType": "NONE",
+                                    "authorizationType": "CUSTOM",
+                                    "authorizerId": {
+                                      "Ref": "RequestAuthorizer7473A0B3"
+                                    },
                                     "httpMethod": "POST",
                                     "integration": {
                                       "type": "AWS_PROXY",
@@ -4257,7 +6613,15 @@
                                         "Fn::Join": [
                                           "",
                                           [
-                                            "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/",
+                                            "arn:",
+                                            {
+                                              "Ref": "AWS::Partition"
+                                            },
+                                            ":apigateway:",
+                                            {
+                                              "Ref": "AWS::Region"
+                                            },
+                                            ":lambda:path/2015-03-31/functions/",
                                             {
                                               "Fn::GetAtt": [
                                                 "AddReviewFnE8F4E4BE",
@@ -4395,7 +6759,15 @@
                                           "Fn::Join": [
                                             "",
                                             [
-                                              "arn:aws:execute-api:eu-west-1:",
+                                              "arn:",
+                                              {
+                                                "Ref": "AWS::Partition"
+                                              },
+                                              ":execute-api:",
+                                              {
+                                                "Ref": "AWS::Region"
+                                              },
+                                              ":",
                                               {
                                                 "Ref": "AWS::AccountId"
                                               },
@@ -4436,7 +6808,15 @@
                                           "Fn::Join": [
                                             "",
                                             [
-                                              "arn:aws:execute-api:eu-west-1:",
+                                              "arn:",
+                                              {
+                                                "Ref": "AWS::Partition"
+                                              },
+                                              ":execute-api:",
+                                              {
+                                                "Ref": "AWS::Region"
+                                              },
+                                              ":",
                                               {
                                                 "Ref": "AWS::AccountId"
                                               },
@@ -4469,7 +6849,15 @@
                                             "Fn::Join": [
                                               "",
                                               [
-                                                "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/",
+                                                "arn:",
+                                                {
+                                                  "Ref": "AWS::Partition"
+                                                },
+                                                ":apigateway:",
+                                                {
+                                                  "Ref": "AWS::Region"
+                                                },
+                                                ":lambda:path/2015-03-31/functions/",
                                                 {
                                                   "Fn::GetAtt": [
                                                     "GetAllReviewsByReviewerNameFn86115EA0",
@@ -4540,6 +6928,14 @@
                 "path": "RestAPIStack/CDKMetadata/Default",
                 "constructInfo": {
                   "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.88.0"
+                }
+              },
+              "Condition": {
+                "id": "Condition",
+                "path": "RestAPIStack/CDKMetadata/Condition",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnCondition",
                   "version": "2.88.0"
                 }
               }
