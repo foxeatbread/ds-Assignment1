@@ -2,7 +2,7 @@
 Student Name: HaoxuanGu  
 Student Id: 20100200  
 Lecturer: Diarmuid O'Connor  
-Demo: 
+Demo: https://www.youtube.com/watch?v=mMEKl478ABo
 ## Api
 Auth-API:  
 POST /auth/signup  - User signup  
@@ -23,7 +23,7 @@ GET /movies/{movieId}/reviews/{year} - Get the reviews written in a specific yea
 GET /reviews/{reviewerName} - Get all the reviews written by a specific reviewer.  
 ![AuthAPI](image-16.png)  
 ![AppAPI1](image-18.png)  
-![AppAPI2](image-17.png)  
+![AppAPI2](image-19.png)
 ### Auth-Api
 
 #### POST /auth/signup  - User signup  
