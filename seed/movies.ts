@@ -357,12 +357,26 @@ export const movieReview: MovieReview[] = [
     rating: 5,
   },
   {
+    movieId: 1234,
+    reviewerName: "Somewho",
+    content: "Idk what I'm talking about.",
+    reviewDate: "20200228",
+    rating: 1,
+  },
+  {
     movieId: 2345,
     reviewerName: "HaoxuanGu",
     content: "Good Movie! I like it.",
     reviewDate: "20240229",
     rating: 5,
   },
+  {
+    movieId: 2345,
+    reviewerName: "Somewho",
+    content: "Idk what I'm talking about.",
+    reviewDate: "20200228",
+    rating: 1,
+  }
 ];
 
 
